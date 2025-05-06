@@ -1,0 +1,20 @@
+FROM ruby:3.4.3
+
+RUN apt-get update -qq && apt-get install -y \
+  build-essential libpq-dev nodejs yarn git
+
+WORKDIR /app
+
+# Install specific bundler and rails versions
+RUN gem install bundler -v 2.4.22 && gem install rails -v 8.0.2
+
+# Copy Gemfile and Gemfile.lock first (for better caching)
+COPY Gemfile Gemfile.lock ./
+
+# Now install dependencies from the Gemfile
+RUN bundle install
+
+# Then copy the rest of the application
+COPY . .
+
+CMD ["rails", "server", "-b", "0.0.0.0"]
