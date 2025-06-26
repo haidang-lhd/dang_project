@@ -20,4 +20,7 @@ Rails.application.routes.draw do
       resources :investment_transactions
     end
   end
+
+  post '/register', to: 'auth#register'
+  post '/login', to: 'auth#login'
 end
