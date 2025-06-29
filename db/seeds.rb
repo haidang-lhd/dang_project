@@ -13,18 +13,18 @@
   Category.find_or_create_by!(name: category_name)
 end
 
-# Create default Assets
+# Create default Assets using STI
 # Investment Fund Certificates
 [ "VESAF", "VMEEF", "VEOF", "VDEF", "DCDS", "DCDE" ].each do |label_name|
-  Asset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Investment Fund Certificates"))
+  FundAsset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Investment Fund Certificates"))
 end
 
 # Stocks
 [ "VPB" ].each do |label_name|
-  Asset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Stocks"))
+  StockAsset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Stocks"))
 end
 
 # Gold
 [ "SJC", "DOJI", "Mi Hong" ].each do |label_name|
-  Asset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Gold"))
+  GoldAsset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Gold"))
 end

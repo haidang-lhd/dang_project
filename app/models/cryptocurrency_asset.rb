@@ -1,0 +1,3 @@
+class CryptocurrencyAsset < Asset
+end
+

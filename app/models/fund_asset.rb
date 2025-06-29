@@ -1,0 +1,3 @@
+class FundAsset < Asset
+end
+

@@ -1,0 +1,3 @@
+class GoldAsset < Asset
+end
+

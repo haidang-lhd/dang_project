@@ -1,0 +1,3 @@
+class StockAsset < Asset
+end
+

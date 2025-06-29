@@ -1,0 +1,3 @@
+class RealEstateAsset < Asset
+end
+

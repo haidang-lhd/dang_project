@@ -1,0 +1,3 @@
+class BondAsset < Asset
+end
+
