@@ -2,15 +2,15 @@ module Api
   module V1
     class InvestmentTransactionsController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_investment_transaction, only: [:show, :update, :destroy]
+      before_action :set_investment_transaction, only: [ :show, :update, :destroy ]
 
       def index
         @investment_transactions = current_user.investment_transactions.includes(:asset)
-        render json: @investment_transactions, include: [:asset]
+        render json: @investment_transactions, include: [ :asset ]
       end
 
       def show
-        render json: @investment_transaction, include: [:asset]
+        render json: @investment_transaction, include: [ :asset ]
       end
 
       def create

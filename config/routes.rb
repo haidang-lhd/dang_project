@@ -21,6 +21,6 @@ Rails.application.routes.draw do
     end
   end
 
-  post '/register', to: 'auth#register'
-  post '/login', to: 'auth#login'
+  post "/register", to: "auth#register"
+  post "/login", to: "auth#login"
 end

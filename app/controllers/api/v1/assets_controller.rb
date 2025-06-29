@@ -2,15 +2,15 @@ module Api
   module V1
     class AssetsController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_asset, only: [:show, :update, :destroy]
+      before_action :set_asset, only: [ :show, :update, :destroy ]
 
       def index
         @assets = current_user.assets.includes(:category, :labels, :asset_prices)
-        render json: @assets, include: [:category, :labels, :asset_prices]
+        render json: @assets, include: [ :category, :labels, :asset_prices ]
       end
 
       def show
-        render json: @asset, include: [:category, :labels, :asset_prices]
+        render json: @asset, include: [ :category, :labels, :asset_prices ]
       end
 
       def create

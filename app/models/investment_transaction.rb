@@ -3,9 +3,13 @@
 # Table name: investment_transactions
 #
 #  id               :bigint           not null, primary key
-#  amount           :decimal(, )      not null
 #  date             :date             not null
+#  fee              :decimal(15, 2)
+#  nav              :decimal(15, 4)   not null
+#  quantity         :decimal(15, 4)   not null
+#  total_amount     :decimal(15, 2)
 #  transaction_type :string           not null
+#  unit             :string           not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  asset_id         :bigint           not null
@@ -24,4 +28,10 @@
 class InvestmentTransaction < ApplicationRecord
   belongs_to :user
   belongs_to :asset
+
+  validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :unit, presence: true
+  validates :nav, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :fee, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :total_amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 end

@@ -2,7 +2,7 @@ module Api
   module V1
     class LabelsController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_label, only: [:show, :update, :destroy]
+      before_action :set_label, only: [ :show, :update, :destroy ]
 
       def index
         @labels = current_user.labels
