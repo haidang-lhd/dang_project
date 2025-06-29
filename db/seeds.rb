@@ -25,6 +25,6 @@ end
 end
 
 # Gold
-[ "SJC", "DOJI", "Mi Hong" ].each do |label_name|
+[ "SJC", "DOJI", "Mi Hong", "PNJ", "PNJ" ].each do |label_name|
   GoldAsset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Gold"))
 end

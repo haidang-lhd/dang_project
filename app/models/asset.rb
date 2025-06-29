@@ -31,4 +31,11 @@ class Asset < ApplicationRecord
   def latest_price
     asset_prices.order(synced_at: :desc).first
   end
+
+  def sync_price
+    self.asset_prices.create!(
+      price: 0.0, # Placeholder for actual price fetching logic
+      synced_at: Time.current
+    )
+  end
 end
