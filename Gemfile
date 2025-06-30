@@ -55,13 +55,17 @@ group :development, :test do
   gem "selenium-webdriver"
   gem "ferrum"
 
-
+  gem "sidekiq"
+  gem "sidekiq-cron"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "annotaterb"
+  gem "byebug"
+  gem "pry"
+  gem "pry-byebug"
 end
 
 group :test do
