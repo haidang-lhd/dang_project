@@ -15,8 +15,5 @@
 #
 class User < ApplicationRecord
   has_secure_password
-  has_many :assets
-  has_many :categories
-  has_many :labels
   has_many :investment_transactions
 end

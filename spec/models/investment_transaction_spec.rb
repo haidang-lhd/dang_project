@@ -69,12 +69,12 @@ RSpec.describe InvestmentTransaction, type: :model do
 
     it 'creates recent transaction' do
       transaction = create(:investment_transaction, :recent)
-      expect(transaction.date).to be_within(1.day).of(1.week.ago)
+      expect(transaction.date.to_date).to be_within(1.day).of(1.week.ago.to_date)
     end
 
     it 'creates old transaction' do
       transaction = create(:investment_transaction, :old)
-      expect(transaction.date).to be_within(1.day).of(1.year.ago)
+      expect(transaction.date.to_date).to be_within(1.day).of(1.year.ago.to_date)
     end
 
     it 'creates high value transaction' do
