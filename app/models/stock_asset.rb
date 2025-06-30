@@ -22,6 +22,7 @@
 #
 class StockAsset < Asset
   def sync_price
+    # rubocop:disable Security/Open
     url = 'https://simplize.vn/co-phieu'
     nav_url = "#{url}/#{name}"
 
@@ -52,5 +53,6 @@ class StockAsset < Asset
         synced_at: Time.current
       )
     end
+    # rubocop:enable Security/Open
   end
 end

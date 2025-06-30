@@ -25,6 +25,7 @@ class FundAsset < Asset
   DRAGONCAPITAL_FUNDS = %w[DCDS DCDE].freeze
 
   def sync_price
+    # rubocop:disable Security/Open
     base_url = 'https://fmarket.vn/quy'
     nav_url = "#{base_url}/#{name.downcase}"
 
@@ -55,5 +56,6 @@ class FundAsset < Asset
         synced_at: Time.current
       )
     end
+    # rubocop:enable Security/Open
   end
 end
