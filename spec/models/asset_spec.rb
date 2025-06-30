@@ -16,4 +16,3 @@ RSpec.describe Asset, type: :model do
     end
   end
 end
-

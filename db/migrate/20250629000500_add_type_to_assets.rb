@@ -4,4 +4,3 @@ class AddTypeToAssets < ActiveRecord::Migration[7.0]
     add_index :assets, :type
   end
 end
-
