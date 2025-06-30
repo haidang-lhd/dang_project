@@ -1,0 +1,7 @@
+:schedule:
+  sync_all_asset_prices_job:
+    cron: "0 * * * *"
+    class: "SyncAllAssetPricesJob"
+    queue: default
+    description: "Run every hour in Vietnam timezone"
+    timezone: "Asia/Ho_Chi_Minh"

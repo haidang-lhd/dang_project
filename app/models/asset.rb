@@ -47,4 +47,8 @@ class Asset < ApplicationRecord
       synced_at: Time.current
     )
   end
+
+  def current_price
+    latest_price&.price || 0.0
+  end
 end

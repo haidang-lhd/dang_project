@@ -59,6 +59,7 @@ group :development, :test do
 
   gem 'sidekiq'
   gem 'sidekiq-cron'
+  gem 'sidekiq-scheduler'
 end
 
 group :development do
