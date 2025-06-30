@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: asset_prices
@@ -62,7 +64,7 @@ RSpec.describe AssetPrice, type: :model do
     it 'creates high price' do
       asset_price = create(:asset_price, :high_price)
       expect(asset_price.price).to be >= 1000
-      expect(asset_price.price).to be <= 10000
+      expect(asset_price.price).to be <= 10_000
     end
 
     it 'creates low price' do

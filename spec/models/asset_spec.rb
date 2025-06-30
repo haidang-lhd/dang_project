@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Asset, type: :model do
@@ -6,9 +8,9 @@ RSpec.describe Asset, type: :model do
     let(:asset) { Asset.create!(name: 'Test Asset', category: category) }
 
     it 'creates a new asset_price with the given price' do
-      expect {
+      expect do
         asset.manual_set_price(123.45)
-      }.to change { asset.asset_prices.count }.by(1)
+      end.to change { asset.asset_prices.count }.by(1)
 
       price_record = asset.asset_prices.order(synced_at: :desc).first
       expect(price_record.price).to eq(123.45)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assets
@@ -20,23 +22,23 @@
 #
 class GoldAsset < Asset
   def sync_price
-    url = "https://giavang.pnj.com.vn/"
+    url = 'https://giavang.pnj.com.vn/'
     begin
       html = URI.open(
         url,
-        "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept" => "text/html"
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Accept' => 'text/html'
       )
       doc = Nokogiri::HTML(html)
-      price_text = if name == "SJC"
-        doc.css("table tr:nth-child(2) td:nth-child(2)").text.strip
-      else
-        # TODO: Handle other gold asset names following the PNJ pricing logic, need to update later
-        doc.css("table tr:nth-child(1) td:nth-child(2)").text.strip
-      end
-      price_text = price_text.gsub(".", "").gsub(",", ".")
+      price_text = if name == 'SJC'
+                     doc.css('table tr:nth-child(2) td:nth-child(2)').text.strip
+                   else
+                     # TODO: Handle other gold asset names following the PNJ pricing logic, need to update later
+                     doc.css('table tr:nth-child(1) td:nth-child(2)').text.strip
+                   end
+      price_text = price_text.gsub('.', '').gsub(',', '.')
       price = price_text.to_f * 100 # Convert to VND
-      self.asset_prices.create!(
+      asset_prices.create!(
         price: price,
         synced_at: Time.current
       )

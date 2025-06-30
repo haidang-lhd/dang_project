@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SyncAllAssetPricesJob, type: :job do
@@ -16,8 +18,8 @@ RSpec.describe SyncAllAssetPricesJob, type: :job do
     allow_any_instance_of(Asset).to receive(:sync_price) do |asset|
       asset.asset_prices.create!(price: 100, synced_at: Time.current)
     end
-    expect {
+    expect do
       described_class.perform_now
-    }.to change { AssetPrice.count }.by(2)
+    end.to change { AssetPrice.count }.by(2)
   end
 end

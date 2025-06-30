@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: categories
@@ -12,27 +14,27 @@ FactoryBot.define do
     sequence(:name) { |n| "Category #{n}" }
 
     trait :stocks do
-      name { "Stocks" }
+      name { 'Stocks' }
     end
 
     trait :gold do
-      name { "Gold" }
+      name { 'Gold' }
     end
 
     trait :bonds do
-      name { "Bonds" }
+      name { 'Bonds' }
     end
 
     trait :real_estate do
-      name { "Real Estate" }
+      name { 'Real Estate' }
     end
 
     trait :cryptocurrency do
-      name { "Cryptocurrency" }
+      name { 'Cryptocurrency' }
     end
 
     trait :investment_fund_certificates do
-      name { "Investment Fund Certificates" }
+      name { 'Investment Fund Certificates' }
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assets
@@ -24,52 +26,52 @@ FactoryBot.define do
     association :category
 
     factory :fund_asset do
-      type { "FundAsset" }
+      type { 'FundAsset' }
       association :category, :investment_fund_certificates
 
       trait :vesaf do
-        name { "VESAF" }
+        name { 'VESAF' }
       end
 
       trait :vmeef do
-        name { "VMEEF" }
+        name { 'VMEEF' }
       end
     end
 
     factory :stock_asset do
-      type { "StockAsset" }
+      type { 'StockAsset' }
       association :category, :stocks
 
       trait :vpb do
-        name { "VPB" }
+        name { 'VPB' }
       end
     end
 
     factory :gold_asset do
-      type { "GoldAsset" }
+      type { 'GoldAsset' }
       association :category, :gold
 
       trait :sjc do
-        name { "SJC" }
+        name { 'SJC' }
       end
 
       trait :doji do
-        name { "DOJI" }
+        name { 'DOJI' }
       end
     end
 
     factory :bond_asset do
-      type { "BondAsset" }
+      type { 'BondAsset' }
       association :category, :bonds
     end
 
     factory :real_estate_asset do
-      type { "RealEstateAsset" }
+      type { 'RealEstateAsset' }
       association :category, :real_estate
     end
 
     factory :cryptocurrency_asset do
-      type { "CryptocurrencyAsset" }
+      type { 'CryptocurrencyAsset' }
       association :category, :cryptocurrency
     end
 

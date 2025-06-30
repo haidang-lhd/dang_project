@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: investment_transactions
@@ -38,11 +40,11 @@ FactoryBot.define do
     association :asset
 
     trait :buy_transaction do
-      transaction_type { "buy" }
+      transaction_type { 'buy' }
     end
 
     trait :sell_transaction do
-      transaction_type { "sell" }
+      transaction_type { 'sell' }
     end
 
     trait :recent do
@@ -56,7 +58,7 @@ FactoryBot.define do
     trait :high_value do
       quantity { 1000 }
       nav { 50.0 }
-      total_amount { 50000.0 }
+      total_amount { 50_000.0 }
     end
 
     trait :low_value do

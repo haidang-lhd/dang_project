@@ -1,8 +1,217 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
-
-# Overwrite or add rules to create your own house style
+# The behavior of RuboCop can be controlled via the .rubocop.yml
+# configuration file. It makes it possible to enable/disable
+# certain cops (checks) and to alter their behavior if they accept
+# any parameters. The file can be placed either in your home
+# directory or in some project directory.
 #
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+# RuboCop will start looking for the configuration file in the directory
+# where the inspected file is and continue its way up to the root directory.
+#
+# See https://docs.rubocop.org/rubocop/configuration
+# https://docs.rubocop.org/rubocop/cops_metrics.html
+# https://github.com/rubocop-hq/rubocop/blob/v1.59.0/config/default.yml
+# https://github.com/rubocop-hq/rubocop/blob/v1.59.0/.rubocop.yml
+#
+# Usage
+# bundle exec rubocop --parallel --format html --out rubocop.html
+# bundle exec rubocop --auto-correct-all --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment
+# bundle exec rubocop --auto-correct-all --only Style/StringLiterals,Layout/EmptyLineAfterGuardClause,Layout/EmptyLines
+# bundle exec rubocop --auto-correct-all --only Layout/ExtraSpacing,Layout/SpaceAroundOperators,Layout/SpaceInsideArrayLiteralBrackets
+# bundle exec rubocop --auto-correct-all --only Style/ExpandPathArguments
+# bundle exec rubocop --auto-correct-all --only Style/GlobalStdStream
+# bundle exec rubocop --auto-correct-all --only Style/RedundantFetchBlock
+
+AllCops:
+  NewCops: disable
+  DisplayCopNames: true
+  TargetRubyVersion: 2.7
+  Include:
+    - "**/Gemfile"
+    - "**/Rakefile"
+    - "**/*.rb"
+  Exclude:
+    - "bin/*"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+    - "spec/fixtures/**/*"
+    - "tmp/**/*"
+    - ".git/**/*"
+    - "db/seeds.rb"
+    - "db/schema.rb"
+    - "db/migrate/*.rb"
+    - "config/routes.rb"
+    - "Guardfile"
+
+Layout/LineLength:
+  Description: 'Checks that line length does not exceed the configured limit.'
+  Max: 250
+
+Layout/SpaceBeforeBlockBraces:
+  Description: 'Checks for space before block braces.'
+  Enabled: false
+
+Layout/SpaceBeforeBrackets:
+  Description: 'Checks for space before brackets.'
+  Enabled: true
+
+Lint/AmbiguousAssignment:
+  Description: 'Checks for ambiguous assignment in conditionals.'
+  Enabled: true
+
+Lint/DeprecatedConstants:
+  Description: 'Checks for usage of deprecated constants.'
+  Enabled: true
+
+Lint/DuplicateBranch:
+  Description: 'Checks for duplicate branches in conditionals.'
+  Enabled: true
+
+Lint/DuplicateRegexpCharacterClassElement:
+  Description: 'Checks for duplicate elements in regexp character classes.'
+  Enabled: true
+
+Lint/EmptyBlock:
+  Description: 'Checks for empty blocks.'
+  Enabled: true
+
+Lint/EmptyClass:
+  Description: 'Checks for empty class definitions.'
+  Enabled: true
+
+Lint/LambdaWithoutLiteralBlock:
+  Description: 'Checks for lambda calls without a literal block.'
+  Enabled: true
+
+Lint/NoReturnInBeginEndBlocks:
+  Description: 'Checks for return statements in begin/end blocks.'
+  Enabled: true
+
+Lint/RedundantDirGlobSort:
+  Description: 'Checks for redundant sort after Dir.glob.'
+  Enabled: true
+
+Lint/ToEnumArguments:
+  Description: 'Checks for redundant arguments to to_enum.'
+  Enabled: true
+
+Lint/UnexpectedBlockArity:
+  Description: 'Checks for unexpected block arity.'
+  Enabled: true
+
+Lint/UnmodifiedReduceAccumulator:
+  Description: 'Checks for reduce accumulators that are not modified.'
+  Enabled: true
+
+Lint/RescueException:
+  Description: 'Avoid rescuing the Exception class.'
+  Enabled: false
+
+Style/RescueModifier:
+  Description: 'Avoid using rescue in its modifier form.'
+  Enabled: false
+
+Style/RescueStandardError:
+  Description: 'Avoid rescuing without specifying an error class.'
+  Enabled: false
+
+Metrics/AbcSize:
+  Description: 'Checks for ABC size complexity.'
+  Enabled: false
+
+Metrics/BlockLength:
+  Description: 'Checks for block length.'
+  Enabled: false
+
+Metrics/ClassLength:
+  Description: 'Checks for class length.'
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Description: 'Checks for cyclomatic complexity.'
+  Enabled: false
+
+Metrics/MethodLength:
+  Description: 'Checks for method length.'
+  Enabled: false
+
+Metrics/ModuleLength:
+  Description: 'Checks for module length.'
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Description: 'Checks for perceived complexity.'
+  Enabled: false
+
+Style/ArgumentsForwarding:
+  Description: 'Checks for usage of arguments forwarding.'
+  Enabled: true
+
+Style/ClassAndModuleChildren:
+  Description: 'Checks for nested class and module definitions.'
+  Enabled: false
+
+Style/CollectionCompact:
+  Description: 'Checks for usage of collection#compact.'
+  Enabled: true
+
+Style/Documentation:
+  Description: 'Checks for missing top-level documentation.'
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Description: 'Checks for dynamic eval definitions.'
+  Enabled: true
+
+Style/EndlessMethod:
+  Description: 'Checks for usage of endless method definitions.'
+  Enabled: true
+
+Style/HashExcept:
+  Description: 'Checks for usage of Hash#except.'
+  Enabled: true
+
+Style/IfUnlessModifier:
+  Description: 'Checks for usage of if/unless modifiers.'
+  Enabled: false
+
+Style/NegatedIfElseCondition:
+  Description: 'Checks for negated conditions in if/else.'
+  Enabled: true
+
+Style/NilLambda:
+  Description: 'Checks for usage of nil as a lambda.'
+  Enabled: true
+
+Style/RedundantArgument:
+  Description: 'Checks for redundant arguments.'
+  Enabled: true
+
+Style/SwapValues:
+  Description: 'Checks for swapping values.'
+  Enabled: true
+
+Style/TrailingCommaInArguments:
+  Description: 'Checks for trailing comma in argument lists.'
+  Enabled: false
+
+Style/TrailingCommaInBlockArgs:
+  Description: 'Checks for useless trailing commas in block arguments.'
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Description: 'Checks for trailing comma in array literals.'
+  EnforcedStyleForMultiline: consistent_comma
+  AutoCorrect: true
+
+Style/TrailingCommaInHashLiteral:
+  Description: 'Checks for trailing comma in hash literals.'
+  EnforcedStyleForMultiline: consistent_comma
+  AutoCorrect: true
+
+Naming/PredicateName:
+  Description: 'Checks for predicate method names.'
+  Enabled: false
+
+Naming/VariableNumber:
+  Description: 'Checks for variable number of arguments.'
+  Enabled: false

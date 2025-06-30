@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class AssetsController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_asset, only: [ :show, :update, :destroy ]
+      before_action :set_asset, only: %i[show update destroy]
 
       def index
         @assets = current_user.assets.includes(:category, :labels, :asset_prices)
-        render json: @assets, include: [ :category, :labels, :asset_prices ]
+        render json: @assets, include: %i[category labels asset_prices]
       end
 
       def show
-        render json: @asset, include: [ :category, :labels, :asset_prices ]
+        render json: @asset, include: %i[category labels asset_prices]
       end
 
       def create
@@ -36,6 +38,7 @@ module Api
       end
 
       private
+
       def set_asset
         @asset = current_user.assets.find(params[:id])
       end

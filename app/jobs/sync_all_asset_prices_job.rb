@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 class SyncAllAssetPricesJob < ApplicationJob
   queue_as :default
 
   def perform
-    Asset.find_each do |asset|
-      asset.sync_price
-    end
+    Asset.find_each(&:sync_price)
   end
 end

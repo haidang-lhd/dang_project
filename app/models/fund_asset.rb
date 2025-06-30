@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assets
@@ -19,36 +21,36 @@
 #  fk_rails_...  (category_id => categories.id)
 #
 class FundAsset < Asset
-  VINACAPITAL_FUNDS = %w[VESAF, VMEEF, VEOF, VDEF]
-  DRAGONCAPITAL_FUNDS = %w[DCDS, DCDE]
+  VINACAPITAL_FUNDS = %w[VESAF VMEEF VEOF VDEF].freeze
+  DRAGONCAPITAL_FUNDS = %w[DCDS DCDE].freeze
 
   def sync_price
-    base_url = "https://fmarket.vn/quy"
-    nav_url = "#{base_url}/#{self.name.downcase}"
+    base_url = 'https://fmarket.vn/quy'
+    nav_url = "#{base_url}/#{name.downcase}"
 
     begin
       html = URI.open(
         nav_url,
-        "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept" => "text/html"
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Accept' => 'text/html'
       )
       doc = Nokogiri::HTML(html)
-      nav_text = doc.css(".nav").first&.text&.strip&.gsub(",", "")
+      nav_text = doc.css('.nav').first&.text&.strip&.gsub(',', '')
       nav = nav_text.to_f if nav_text
 
-      self.asset_prices.create!(
+      asset_prices.create!(
         price: nav || 0.0,
         synced_at: Time.current
       )
     rescue OpenURI::HTTPError, SocketError => e
-      Rails.logger.error "HTTP error while syncing price for #{self.name}: #{e.message}\n#{e.backtrace.join("\n")}"
-      self.asset_prices.create!(
+      Rails.logger.error "HTTP error while syncing price for #{name}: #{e.message}\n#{e.backtrace.join("\n")}"
+      asset_prices.create!(
         price: 0.0,
         synced_at: Time.current
       )
     rescue StandardError => e
-      Rails.logger.error "Unexpected error while syncing price for #{self.name}: #{e.message}\n#{e.backtrace.join("\n")}"
-      self.asset_prices.create!(
+      Rails.logger.error "Unexpected error while syncing price for #{name}: #{e.message}\n#{e.backtrace.join("\n")}"
+      asset_prices.create!(
         price: 0.0,
         synced_at: Time.current
       )

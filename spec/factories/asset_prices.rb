@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: asset_prices
@@ -36,7 +38,7 @@ FactoryBot.define do
     end
 
     trait :high_price do
-      price { Faker::Number.between(from: 1000, to: 10000) }
+      price { Faker::Number.between(from: 1000, to: 10_000) }
     end
 
     trait :low_price do

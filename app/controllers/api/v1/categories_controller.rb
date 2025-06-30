@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class CategoriesController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_category, only: [ :show, :update, :destroy ]
+      before_action :set_category, only: %i[show update destroy]
 
       def index
         @categories = current_user.categories
@@ -36,6 +38,7 @@ module Api
       end
 
       private
+
       def set_category
         @category = current_user.categories.find(params[:id])
       end

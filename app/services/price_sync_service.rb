@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PriceSyncService
   # Syncs prices for all assets of a user
   def self.sync_all_for_user(user)

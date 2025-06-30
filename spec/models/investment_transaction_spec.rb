@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: investment_transactions
@@ -81,7 +83,7 @@ RSpec.describe InvestmentTransaction, type: :model do
       transaction = create(:investment_transaction, :high_value)
       expect(transaction.quantity).to eq(1000)
       expect(transaction.nav).to eq(50.0)
-      expect(transaction.total_amount).to eq(50000.0)
+      expect(transaction.total_amount).to eq(50_000.0)
     end
 
     it 'creates low value transaction' do
@@ -131,10 +133,10 @@ RSpec.describe InvestmentTransaction, type: :model do
   describe 'decimal precision' do
     it 'stores decimal values with correct precision' do
       transaction = create(:investment_transaction,
-                          quantity: 123.4567,
-                          nav: 45.6789,
-                          fee: 12.34,
-                          total_amount: 5678.90)
+                           quantity: 123.4567,
+                           nav: 45.6789,
+                           fee: 12.34,
+                           total_amount: 5678.90)
 
       transaction.reload
       expect(transaction.quantity).to eq(123.4567)

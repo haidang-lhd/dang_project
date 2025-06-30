@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assets
@@ -33,14 +35,14 @@ class Asset < ApplicationRecord
   end
 
   def sync_price
-    self.asset_prices.create!(
+    asset_prices.create!(
       price: 0.0, # Placeholder for actual price fetching logic
       synced_at: Time.current
     )
   end
 
   def manual_set_price(price)
-    self.asset_prices.create!(
+    asset_prices.create!(
       price: price,
       synced_at: Time.current
     )
