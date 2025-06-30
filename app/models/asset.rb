@@ -38,4 +38,11 @@ class Asset < ApplicationRecord
       synced_at: Time.current
     )
   end
+
+  def manual_set_price(price)
+    self.asset_prices.create!(
+      price: price,
+      synced_at: Time.current
+    )
+  end
 end
