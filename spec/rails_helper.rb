@@ -72,6 +72,10 @@ RSpec.configure do |config|
   # Include FactoryBot methods
   config.include FactoryBot::Syntax::Methods
 
+  # Include Devise test helpers
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
   # Database cleaner configuration
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
@@ -82,6 +86,11 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning do
       example.run
     end
+  end
+
+  # Clear ActionMailer deliveries before each test
+  config.before(:each) do
+    ActionMailer::Base.deliveries.clear
   end
 end
 

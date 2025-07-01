@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: jwt_denylists
+#
+#  id         :bigint           not null, primary key
+#  exp        :datetime         not null
+#  jti        :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_jwt_denylists_on_jti  (jti)
+#
+one:
+  jti: MyString
+  exp: 2025-06-30 16:41:26
+
+two:
+  jti: MyString
+  exp: 2025-06-30 16:41:26
