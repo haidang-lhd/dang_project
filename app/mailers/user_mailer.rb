@@ -17,11 +17,10 @@ class UserMailer < ApplicationMailer
   def reset_password_instructions(record, token, _opts = {})
     @token = token
     @resource = record
-    # Không tạo reset_url nữa, chỉ gửi token
 
     mail(
       to: @resource.email,
-      subject: 'Reset your password - Token'
+      subject: 'Reset your password'
     )
   end
 end

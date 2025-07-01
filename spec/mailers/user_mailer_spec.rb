@@ -51,9 +51,8 @@ RSpec.describe UserMailer, type: :mailer do
       expect(mail.from).to eq(['noreply@yourdomain.com'])
     end
 
-    it 'includes reset password link in body' do
-      expect(mail.body.encoded).to include('password/edit?reset_password_token=')
-      expect(mail.body.encoded).to include(token)
+    it 'includes reset token in body' do
+      expect(mail.body.encoded).to include('Reset Token: sample_reset_token')
     end
 
     it 'includes user email in body' do
@@ -61,7 +60,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it 'includes reset instructions' do
-      expect(mail.body.encoded).to include('change your password')
+      expect(mail.body.encoded).to include('Please use the following token to reset your password')
     end
   end
 end
