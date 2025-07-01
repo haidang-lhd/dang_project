@@ -10,8 +10,7 @@ RSpec.describe Api::V1::AssetsController, type: :controller do
   let!(:asset1) { create(:asset, name: 'Apple Inc', category: category, type: 'StockAsset') }
   let!(:asset2) { create(:asset, name: 'Google Inc', category: category, type: 'StockAsset') }
 
-  let(:jwt_token) { JWT.encode({ user_id: user.id, exp: 24.hours.from_now.to_i }, Rails.application.secret_key_base) }
-  let(:auth_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
+  let(:auth_headers) { { 'Authorization' => "Bearer #{generate_jwt_token(user)}" } }
 
   describe 'GET #index' do
     context 'without category filter' do

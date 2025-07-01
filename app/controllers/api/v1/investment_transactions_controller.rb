@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-class Api::V1::InvestmentTransactionsController < Api::BaseController
+class Api::V1::InvestmentTransactionsController < Api::V1::BaseController
   before_action :set_investment_transaction, only: %i[show update destroy]
+
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   def index
     @investment_transactions = current_user.investment_transactions
@@ -48,5 +50,9 @@ class Api::V1::InvestmentTransactionsController < Api::BaseController
       :asset_id, :transaction_type, :quantity, :nav,
       :total_amount, :fee, :unit, :date
     )
+  end
+
+  def record_not_found
+    render json: { error: 'Record not found' }, status: :not_found
   end
 end

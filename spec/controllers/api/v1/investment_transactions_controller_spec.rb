@@ -13,8 +13,7 @@ RSpec.describe Api::V1::InvestmentTransactionsController, type: :controller do
   let!(:transaction2) { create(:investment_transaction, user: user, asset: asset) }
   let!(:other_user_transaction) { create(:investment_transaction, user: other_user, asset: asset) }
 
-  let(:jwt_token) { JWT.encode({ user_id: user.id, exp: 24.hours.from_now.to_i }, Rails.application.secret_key_base) }
-  let(:auth_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
+  let(:auth_headers) { { 'Authorization' => "Bearer #{generate_jwt_token(user)}" } }
 
   describe 'GET #index' do
     context 'with authentication' do
