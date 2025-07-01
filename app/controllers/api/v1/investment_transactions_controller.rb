@@ -1,51 +1,58 @@
 # frozen_string_literal: true
 
-module Api
-  module V1
-    class InvestmentTransactionsController < ApplicationController
-      before_action :authenticate_user!
-      before_action :set_investment_transaction, only: %i[show update destroy]
+class Api::V1::InvestmentTransactionsController < Api::V1::BaseController
+  before_action :set_investment_transaction, only: %i[show update destroy]
 
-      def index
-        @investment_transactions = current_user.investment_transactions.includes(:asset)
-        render json: @investment_transactions, include: [:asset]
-      end
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
-      def show
-        render json: @investment_transaction, include: [:asset]
-      end
+  def index
+    @investment_transactions = current_user.investment_transactions
+                                           .includes(:asset, :user)
+                                           .order(date: :desc)
 
-      def create
-        @investment_transaction = current_user.investment_transactions.new(investment_transaction_params)
-        if @investment_transaction.save
-          render json: @investment_transaction, status: :created
-        else
-          render json: @investment_transaction.errors, status: :unprocessable_entity
-        end
-      end
+    # Filter by asset if provided
+    @investment_transactions = @investment_transactions.where(asset_id: params[:asset_id]) if params[:asset_id].present?
+  end
 
-      def update
-        if @investment_transaction.update(investment_transaction_params)
-          render json: @investment_transaction
-        else
-          render json: @investment_transaction.errors, status: :unprocessable_entity
-        end
-      end
+  def show; end
 
-      def destroy
-        @investment_transaction.destroy
-        head :no_content
-      end
+  def create
+    @investment_transaction = current_user.investment_transactions.build(investment_transaction_params)
 
-      private
-
-      def set_investment_transaction
-        @investment_transaction = current_user.investment_transactions.find(params[:id])
-      end
-
-      def investment_transaction_params
-        params.require(:investment_transaction).permit(:asset_id, :amount, :transaction_type, :date)
-      end
+    if @investment_transaction.save
+      render :show, status: :created
+    else
+      render json: { errors: @investment_transaction.errors }, status: :unprocessable_entity
     end
+  end
+
+  def update
+    if @investment_transaction.update(investment_transaction_params)
+      render :show
+    else
+      render json: { errors: @investment_transaction.errors }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @investment_transaction.destroy
+    head :no_content
+  end
+
+  private
+
+  def set_investment_transaction
+    @investment_transaction = current_user.investment_transactions.find(params[:id])
+  end
+
+  def investment_transaction_params
+    params.require(:investment_transaction).permit(
+      :asset_id, :transaction_type, :quantity, :nav,
+      :total_amount, :fee, :unit, :date
+    )
+  end
+
+  def record_not_found
+    render json: { error: 'Record not found' }, status: :not_found
   end
 end
