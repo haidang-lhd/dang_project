@@ -12,14 +12,14 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       render json: {
         status: {
           code: 200,
-          message: 'Account confirmed successfully.'
-        }
+          message: 'Account confirmed successfully.',
+        },
       }, status: :ok
     else
       render json: {
         status: {
-          message: "Account confirmation failed. #{resource.errors.full_messages.to_sentence}"
-        }
+          message: "Account confirmation failed. #{resource.errors.full_messages.to_sentence}",
+        },
       }, status: :unprocessable_entity
     end
   end
@@ -33,14 +33,14 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       render json: {
         status: {
           code: 200,
-          message: 'Confirmation instructions sent successfully.'
-        }
+          message: 'Confirmation instructions sent successfully.',
+        },
       }, status: :ok
     else
       render json: {
         status: {
-          message: "Email not found."
-        }
+          message: 'Email not found.',
+        },
       }, status: :not_found
     end
   end

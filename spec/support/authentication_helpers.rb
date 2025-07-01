@@ -5,7 +5,7 @@ module AuthenticationHelpers
     JWT.encode(
       {
         sub: user.id,
-        exp: 24.hours.from_now.to_i
+        exp: 24.hours.from_now.to_i,
       },
       Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base
     )

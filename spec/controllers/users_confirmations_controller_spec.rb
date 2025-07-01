@@ -72,16 +72,16 @@ RSpec.describe Users::ConfirmationsController, type: :controller do
     let(:valid_params) do
       {
         user: {
-          email: user.email
-        }
+          email: user.email,
+        },
       }
     end
 
     let(:invalid_params) do
       {
         user: {
-          email: 'nonexistent@example.com'
-        }
+          email: 'nonexistent@example.com',
+        },
       }
     end
 
@@ -99,9 +99,9 @@ RSpec.describe Users::ConfirmationsController, type: :controller do
         # Clear previous emails first since user was already created with confirmation
         ActionMailer::Base.deliveries.clear
 
-        expect {
+        expect do
           post :create, params: valid_params, format: :json
-        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
       it 'updates confirmation_sent_at timestamp' do
@@ -139,8 +139,8 @@ RSpec.describe Users::ConfirmationsController, type: :controller do
       let(:confirmed_params) do
         {
           user: {
-            email: confirmed_user.email
-          }
+            email: confirmed_user.email,
+          },
         }
       end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: jwt_denylists
@@ -12,7 +14,7 @@
 #
 #  index_jwt_denylists_on_jti  (jti)
 #
-require "test_helper"
+require 'test_helper'
 
 class JwtDenylistTest < ActiveSupport::TestCase
   # test "the truth" do

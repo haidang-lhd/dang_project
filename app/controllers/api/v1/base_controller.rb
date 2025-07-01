@@ -10,12 +10,12 @@ module Api
       def authenticate_user!
         # Let Devise handle JWT authentication
         super
-      rescue => e
+      rescue
         render json: {
           status: {
             code: 401,
-            message: 'You need to sign in or sign up before continuing.'
-          }
+            message: 'You need to sign in or sign up before continuing.',
+          },
         }, status: :unauthorized
       end
     end

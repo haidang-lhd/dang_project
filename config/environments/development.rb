@@ -49,7 +49,7 @@ Rails.application.configure do
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['APP_PASSWORD'] || ENV['GMAIL_PASSWORD'],
     authentication: 'plain',
-    enable_starttls_auto: true
+    enable_starttls_auto: true,
   }
 
   # Set localhost to be used by links generated in mailer templates.

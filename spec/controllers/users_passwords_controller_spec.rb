@@ -13,16 +13,16 @@ RSpec.describe Users::PasswordsController, type: :controller do
     let(:valid_params) do
       {
         user: {
-          email: user.email
-        }
+          email: user.email,
+        },
       }
     end
 
     let(:invalid_params) do
       {
         user: {
-          email: 'nonexistent@example.com'
-        }
+          email: 'nonexistent@example.com',
+        },
       }
     end
 
@@ -37,9 +37,9 @@ RSpec.describe Users::PasswordsController, type: :controller do
       end
 
       it 'sends password reset email' do
-        expect {
+        expect do
           post :create, params: valid_params, format: :json
-        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
       it 'generates reset password token' do
@@ -61,9 +61,9 @@ RSpec.describe Users::PasswordsController, type: :controller do
       end
 
       it 'does not send email' do
-        expect {
+        expect do
           post :create, params: invalid_params, format: :json
-        }.not_to change { ActionMailer::Base.deliveries.count }
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
   end
@@ -76,8 +76,8 @@ RSpec.describe Users::PasswordsController, type: :controller do
         user: {
           reset_password_token: reset_token,
           password: 'newpassword123',
-          password_confirmation: 'newpassword123'
-        }
+          password_confirmation: 'newpassword123',
+        },
       }
     end
 
@@ -86,8 +86,8 @@ RSpec.describe Users::PasswordsController, type: :controller do
         user: {
           reset_password_token: reset_token,
           password: 'newpassword123',
-          password_confirmation: 'different_password'
-        }
+          password_confirmation: 'different_password',
+        },
       }
     end
 
@@ -96,8 +96,8 @@ RSpec.describe Users::PasswordsController, type: :controller do
         user: {
           reset_password_token: 'expired_or_invalid_token',
           password: 'newpassword123',
-          password_confirmation: 'newpassword123'
-        }
+          password_confirmation: 'newpassword123',
+        },
       }
     end
 

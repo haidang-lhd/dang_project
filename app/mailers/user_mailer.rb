@@ -3,7 +3,7 @@
 class UserMailer < ApplicationMailer
   default from: 'noreply@yourdomain.com'
 
-  def confirmation_instructions(record, token, opts = {})
+  def confirmation_instructions(record, token, _opts = {})
     @token = token
     @resource = record
     @confirmation_url = "#{Rails.application.config.action_mailer.default_url_options[:host]}:#{Rails.application.config.action_mailer.default_url_options[:port]}/users/confirmation?confirmation_token=#{@token}"
@@ -14,7 +14,7 @@ class UserMailer < ApplicationMailer
     )
   end
 
-  def reset_password_instructions(record, token, opts = {})
+  def reset_password_instructions(record, token, _opts = {})
     @token = token
     @resource = record
     # Không tạo reset_url nữa, chỉ gửi token

@@ -15,8 +15,8 @@ RSpec.describe Users::SessionsController, type: :controller do
       {
         user: {
           email: user.email,
-          password: 'password123'
-        }
+          password: 'password123',
+        },
       }
     end
 
@@ -24,8 +24,8 @@ RSpec.describe Users::SessionsController, type: :controller do
       {
         user: {
           email: user.email,
-          password: 'wrong_password'
-        }
+          password: 'wrong_password',
+        },
       }
     end
 
@@ -99,8 +99,8 @@ RSpec.describe Users::SessionsController, type: :controller do
         {
           user: {
             email: unconfirmed_user.email,
-            password: 'password123'
-          }
+            password: 'password123',
+          },
         }
       end
 
@@ -143,13 +143,13 @@ RSpec.describe Users::SessionsController, type: :controller do
 
     context 'with invalid JWT token' do
       before do
-        request.headers['Authorization'] = "Bearer invalid_token"
+        request.headers['Authorization'] = 'Bearer invalid_token'
       end
 
       it 'returns unauthorized response' do
-        expect {
+        expect do
           delete :destroy, format: :json
-        }.not_to raise_error
+        end.not_to raise_error
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -162,7 +162,7 @@ RSpec.describe Users::SessionsController, type: :controller do
     JWT.encode(
       {
         sub: user.id,
-        exp: 24.hours.from_now.to_i
+        exp: 24.hours.from_now.to_i,
       },
       Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base
     )

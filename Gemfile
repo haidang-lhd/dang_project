@@ -28,7 +28,7 @@ gem 'devise-jwt'
 gem 'jwt'
 
 # Environment variables
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails', groups: %i[development test]
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[windows jruby]
@@ -68,7 +68,6 @@ group :development, :test do
   gem 'sidekiq'
   gem 'sidekiq-cron'
   gem 'sidekiq-scheduler'
-  gem 'dotenv-rails'
 end
 
 group :development do

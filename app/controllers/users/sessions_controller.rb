@@ -24,9 +24,9 @@ class Users::SessionsController < Devise::SessionsController
         message: 'Logged in successfully.',
         data: {
           user: jbuilder_user_data(current_user),
-          token: token
-        }
-      }
+          token: token,
+        },
+      },
     }, status: :ok
   end
 
@@ -36,15 +36,15 @@ class Users::SessionsController < Devise::SessionsController
       render json: {
         status: {
           code: 200,
-          message: 'Logged out successfully.'
-        }
+          message: 'Logged out successfully.',
+        },
       }, status: :ok
     else
       render json: {
         status: {
           code: 401,
-          message: "Couldn't find an active session."
-        }
+          message: "Couldn't find an active session.",
+        },
       }, status: :unauthorized
     end
   end
@@ -54,7 +54,7 @@ class Users::SessionsController < Devise::SessionsController
     payload = {
       sub: user.id.to_s,
       jti: SecureRandom.uuid,
-      exp: 1.day.from_now.to_i
+      exp: 1.day.from_now.to_i,
     }
     JWT.encode(payload, Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base)
   end

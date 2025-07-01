@@ -12,14 +12,14 @@ class Users::PasswordsController < Devise::PasswordsController
       render json: {
         status: {
           code: 200,
-          message: 'Password reset instructions sent successfully.'
-        }
+          message: 'Password reset instructions sent successfully.',
+        },
       }, status: :ok
     else
       render json: {
         status: {
-          message: "Email not found."
-        }
+          message: 'Email not found.',
+        },
       }, status: :not_found
     end
   end
@@ -34,15 +34,15 @@ class Users::PasswordsController < Devise::PasswordsController
       render json: {
         status: {
           code: 200,
-          message: 'Password updated successfully.'
-        }
+          message: 'Password updated successfully.',
+        },
       }, status: :ok
     else
       set_minimum_password_length
       render json: {
         status: {
-          message: "Password reset failed. #{resource.errors.full_messages.to_sentence}"
-        }
+          message: "Password reset failed. #{resource.errors.full_messages.to_sentence}",
+        },
       }, status: :unprocessable_entity
     end
   end
