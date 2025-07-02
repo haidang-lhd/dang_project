@@ -35,9 +35,9 @@ RSpec.describe GoldAsset, type: :model do
       end
 
       it 'successfully syncs DOJI price from XML response' do
-        expect {
+        expect do
           doji_asset.sync_price
-        }.to change { doji_asset.asset_prices.count }.by(1)
+        end.to change { doji_asset.asset_prices.count }.by(1)
 
         latest_price = doji_asset.asset_prices.last
         expect(latest_price.price).to eq(11_740_000) # 11,740 * 1000
@@ -127,18 +127,18 @@ RSpec.describe GoldAsset, type: :model do
     end
 
     it 'syncs price from PNJ website for non-SJC assets' do
-      expect {
+      expect do
         gold_asset.send(:sync_with_pnj_logic)
-      }.to change { gold_asset.asset_prices.count }.by(1)
+      end.to change { gold_asset.asset_prices.count }.by(1)
 
       latest_price = gold_asset.asset_prices.last
       expect(latest_price.price).to eq(1_150_000) # 11.500 -> 11500 * 100
     end
 
     it 'syncs price from PNJ website for SJC assets' do
-      expect {
+      expect do
         sjc_asset.send(:sync_with_pnj_logic)
-      }.to change { sjc_asset.asset_prices.count }.by(1)
+      end.to change { sjc_asset.asset_prices.count }.by(1)
 
       latest_price = sjc_asset.asset_prices.last
       expect(latest_price.price).to eq(1_200_000) # 12.000 -> 12000 * 100
@@ -174,9 +174,9 @@ RSpec.describe GoldAsset, type: :model do
     end
 
     it 'extracts price from XML and creates asset_price record' do
-      expect {
+      expect do
         doji_asset.send(:sync_doji_price)
-      }.to change { doji_asset.asset_prices.count }.by(1)
+      end.to change { doji_asset.asset_prices.count }.by(1)
 
       latest_price = doji_asset.asset_prices.last
       expect(latest_price.price).to eq(11_740_000) # 11,740 * 1000

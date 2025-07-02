@@ -33,10 +33,8 @@ class GoldAsset < Asset
   private
 
   def sync_doji_price
-    begin
-      # Make curl request to DOJI API
-      # rubocop:disable Security/CommandInjection
-      curl_command = %{
+    # Make curl request to DOJI API
+    curl_command = %{
         curl 'http://update.giavang.doji.vn/banggia/doji_92411/92411' \
           -H 'Accept: application/json, text/plain, */*' \
           -H 'Accept-Language: en,vi-VN;q=0.9,vi;q=0.8,fr-FR;q=0.7,fr;q=0.6,en-US;q=0.5' \
@@ -47,33 +45,30 @@ class GoldAsset < Asset
           --insecure
       }.strip.gsub(/\s+/, ' ')
 
-      xml_response = `#{curl_command}`
-      # rubocop:enable Security/CommandInjection
+    xml_response = `#{curl_command}`
+    # Parse XML response
+    doc = Nokogiri::XML(xml_response)
 
-      # Parse XML response
-      doc = Nokogiri::XML(xml_response)
+    # Find the "Nhẫn Tròn 9999" row and extract sell price
+    nhan_tron_row = doc.xpath("//Row[contains(@Name, 'Nhẫn Tròn 9999')]").first
 
-      # Find the "Nhẫn Tròn 9999" row and extract sell price
-      nhan_tron_row = doc.xpath("//Row[contains(@Name, 'Nhẫn Tròn 9999')]").first
+    if nhan_tron_row
+      sell_price_text = nhan_tron_row['Sell']
+      # Remove commas and convert to float, then multiply by 1000 to get VND/chỉ
+      price = sell_price_text.gsub(',', '').to_f * 1000
 
-      if nhan_tron_row
-        sell_price_text = nhan_tron_row['Sell']
-        # Remove commas and convert to float, then multiply by 1000 to get VND/chỉ
-        price = sell_price_text.gsub(',', '').to_f * 1000
-
-        asset_prices.create!(
-          price: price,
-          synced_at: Time.current
-        )
-        price
-      else
-        Rails.logger.warn("Could not find 'Nhẫn Tròn 9999' price in DOJI response, falling back to PNJ")
-        sync_with_pnj_logic
-      end
-    rescue => e
-      Rails.logger.warn("Failed to sync DOJI price for GoldAsset #{id}: #{e.message}, falling back to PNJ")
+      asset_prices.create!(
+        price: price,
+        synced_at: Time.current
+      )
+      price
+    else
+      Rails.logger.warn("Could not find 'Nhẫn Tròn 9999' price in DOJI response, falling back to PNJ")
       sync_with_pnj_logic
     end
+  rescue => e
+    Rails.logger.warn("Failed to sync DOJI price for GoldAsset #{id}: #{e.message}, falling back to PNJ")
+    sync_with_pnj_logic
   end
 
   def sync_with_pnj_logic
