@@ -25,7 +25,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Asset #{n}" }
     association :category
 
-    factory :fund_asset do
+    factory :fund_asset, class: 'FundAsset' do
       type { 'FundAsset' }
       association :category, :investment_fund_certificates
 
@@ -38,7 +38,7 @@ FactoryBot.define do
       end
     end
 
-    factory :stock_asset do
+    factory :stock_asset, class: 'StockAsset' do
       type { 'StockAsset' }
       association :category, :stocks
 
@@ -47,7 +47,7 @@ FactoryBot.define do
       end
     end
 
-    factory :gold_asset do
+    factory :gold_asset, class: 'GoldAsset' do
       type { 'GoldAsset' }
       association :category, :gold
 
@@ -60,19 +60,23 @@ FactoryBot.define do
       end
     end
 
-    factory :bond_asset do
+    factory :cryptocurrency_asset, class: 'CryptocurrencyAsset' do
+      type { 'CryptocurrencyAsset' }
+      association :category, :cryptocurrency
+
+      trait :bitcoin do
+        name { 'BTC' }
+      end
+    end
+
+    factory :bond_asset, class: 'BondAsset' do
       type { 'BondAsset' }
       association :category, :bonds
     end
 
-    factory :real_estate_asset do
+    factory :real_estate_asset, class: 'RealEstateAsset' do
       type { 'RealEstateAsset' }
       association :category, :real_estate
-    end
-
-    factory :cryptocurrency_asset do
-      type { 'CryptocurrencyAsset' }
-      association :category, :cryptocurrency
     end
 
     trait :with_prices do
