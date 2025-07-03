@@ -35,7 +35,7 @@ RSpec.describe 'Authentication Integration', type: :request do
 
       # Step 3: Confirm account
       confirmation_token = user.confirmation_token
-      get '/api/v1/users/confirmation', params: { confirmation_token: confirmation_token }, as: :json
+      post '/api/v1/users/confirmation', params: { confirmation_token: confirmation_token }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']['message']).to eq('Account confirmed successfully.')

@@ -21,8 +21,8 @@ RSpec.describe UserMailer, type: :mailer do
       expect(mail.from).to eq(['noreply@yourdomain.com'])
     end
 
-    it 'includes confirmation link in body' do
-      expect(mail.body.encoded).to include('confirmation?confirmation_token=')
+    it 'includes confirmation token in body' do
+      expect(mail.body.encoded).to include("Your confirmation token is: #{token}")
       expect(mail.body.encoded).to include(token)
     end
 
