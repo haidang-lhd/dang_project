@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::InvestmentTransactionsController < Api::V1::BaseController
+  before_action :authenticate_user!
   before_action :set_investment_transaction, only: %i[show update destroy]
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Users::SessionsController, type: :controller do
+RSpec.describe Api::V1::Users::SessionsController, type: :controller do
   let(:user) { create(:user, :confirmed) }
   let(:unconfirmed_user) { create(:user, :unconfirmed) }
 

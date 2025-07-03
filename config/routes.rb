@@ -1,18 +1,6 @@
 Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
 
-  # Devise routes for API authentication
-  devise_for :users, path: '', path_names: {
-    sign_in: 'login',
-    sign_out: 'logout',
-    registration: 'signup'
-  }, controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations',
-    passwords: 'users/passwords',
-    confirmations: 'users/confirmations'
-  }
-
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -25,6 +13,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # Devise routes for API authentication - moved to api/v1 namespace
+  devise_for :users, path: 'api/v1/users', path_names: {
+    sign_in: 'login',
+    sign_out: 'logout',
+    registration: 'signup'
+  }, controllers: {
+    sessions: 'api/v1/users/sessions',
+    registrations: 'api/v1/users/registrations',
+    passwords: 'api/v1/users/passwords',
+    confirmations: 'api/v1/users/confirmations'
+  }
 
   namespace :api do
     namespace :v1 do
