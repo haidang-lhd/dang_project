@@ -13,56 +13,56 @@ RSpec.describe Api::V1::Users::ConfirmationsController, type: :controller do
   end
 
   context 'with valid confirmation token' do
-      it 'confirms the user account' do
-        post :create, params: { confirmation_token: confirmation_token }, format: :json
+    it 'confirms the user account' do
+      post :create, params: { confirmation_token: confirmation_token }, format: :json
 
-        expect(response).to have_http_status(:ok)
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['code']).to eq(200)
-        expect(json_response['status']['message']).to eq('Account confirmed successfully.')
-      end
-
-      it 'updates user confirmed_at timestamp' do
-        expect(user.confirmed_at).to be_nil
-
-        post :create, params: { confirmation_token: confirmation_token }, format: :json
-
-        user.reload
-        expect(user.confirmed_at).to be_present
-        expect(user.confirmed?).to be_truthy
-      end
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response['status']['code']).to eq(200)
+      expect(json_response['status']['message']).to eq('Account confirmed successfully.')
     end
 
-    context 'with invalid confirmation token' do
-      it 'returns validation error' do
-        post :create, params: { confirmation_token: 'invalid_token' }, format: :json
+    it 'updates user confirmed_at timestamp' do
+      expect(user.confirmed_at).to be_nil
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to include('Confirmation token is invalid')
-      end
+      post :create, params: { confirmation_token: confirmation_token }, format: :json
 
-      it 'does not confirm the user' do
-        post :create, params: { confirmation_token: 'invalid_token' }, format: :json
+      user.reload
+      expect(user.confirmed_at).to be_present
+      expect(user.confirmed?).to be_truthy
+    end
+  end
 
-        user.reload
-        expect(user.confirmed?).to be_falsey
-      end
+  context 'with invalid confirmation token' do
+    it 'returns validation error' do
+      post :create, params: { confirmation_token: 'invalid_token' }, format: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      json_response = JSON.parse(response.body)
+      expect(json_response['status']['message']).to include('Confirmation token is invalid')
     end
 
-    context 'with expired confirmation token' do
-      before do
-        user.update_columns(confirmation_sent_at: 4.days.ago)
-      end
+    it 'does not confirm the user' do
+      post :create, params: { confirmation_token: 'invalid_token' }, format: :json
 
-      it 'returns validation error' do
-        post :create, params: { confirmation_token: confirmation_token }, format: :json
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to include('needs to be confirmed within 3 days')
-      end
+      user.reload
+      expect(user.confirmed?).to be_falsey
     end
+  end
+
+  context 'with expired confirmation token' do
+    before do
+      user.update_columns(confirmation_sent_at: 4.days.ago)
+    end
+
+    it 'returns validation error' do
+      post :create, params: { confirmation_token: confirmation_token }, format: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      json_response = JSON.parse(response.body)
+      expect(json_response['status']['message']).to include('needs to be confirmed within 3 days')
+    end
+  end
 
   let(:confirmation_token) { user.confirmation_token }
 
