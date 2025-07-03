@@ -3,49 +3,50 @@
 class Api::V1::Users::ConfirmationsController < Devise::ConfirmationsController
   respond_to :json
 
-  # GET /api/v1/users/confirmation?confirmation_token=abcdef
-  def show
-    self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-    yield resource if block_given?
-
-    if resource.errors.empty?
-      render json: {
-        status: {
-          code: 200,
-          message: 'Account confirmed successfully.',
-        },
-      }, status: :ok
-    else
-      render json: {
-        status: {
-          message: "Account confirmation failed. #{resource.errors.full_messages.to_sentence}",
-        },
-      }, status: :unprocessable_entity
-    end
-  end
-
   # POST /api/v1/users/confirmation
   def create
-    self.resource = resource_class.send_confirmation_instructions(resource_params)
-    yield resource if block_given?
+    if params[:confirmation_token].present?
+      # Handle confirmation with token
+      self.resource = resource_class.confirm_by_token(params[:confirmation_token])
+      yield resource if block_given?
 
-    if successfully_sent?(resource)
-      render json: {
-        status: {
-          code: 200,
-          message: 'Confirmation instructions sent successfully.',
-        },
-      }, status: :ok
+      if resource.errors.empty?
+        render json: {
+          status: {
+            code: 200,
+            message: 'Account confirmed successfully.',
+          },
+        }, status: :ok
+      else
+        render json: {
+          status: {
+            message: resource.errors.full_messages.to_sentence,
+          },
+        }, status: :unprocessable_entity
+      end
     else
-      render json: {
-        status: {
-          message: 'Email not found.',
-        },
-      }, status: :not_found
+      # Handle sending confirmation instructions
+      self.resource = resource_class.send_confirmation_instructions(resource_params)
+      yield resource if block_given?
+
+      if successfully_sent?(resource)
+        render json: {
+          status: {
+            code: 200,
+            message: 'Confirmation instructions sent successfully.',
+          },
+        }, status: :ok
+      else
+        render json: {
+          status: {
+            message: resource.errors.full_messages.to_sentence,
+          },
+        }, status: :unprocessable_entity
+      end
     end
   end
 
-  private
+  protected
 
   def resource_params
     params.require(:user).permit(:email)
