@@ -26,13 +26,7 @@ RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
       }
     end
 
-    context 'with valid email' do
-      it 'sends password reset instructions' do
-        expect do
-          post :create, params: valid_params, format: :json
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
-
+    context 'with existing user email' do
       it 'returns success response' do
         post :create, params: valid_params, format: :json
 
@@ -41,9 +35,23 @@ RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
         expect(json_response['status']['code']).to eq(200)
         expect(json_response['status']['message']).to eq('Password reset instructions sent successfully.')
       end
+
+      it 'sends password reset email' do
+        expect do
+          post :create, params: valid_params, format: :json
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      it 'generates reset password token' do
+        post :create, params: valid_params, format: :json
+
+        user.reload
+        expect(user.reset_password_token).to be_present
+        expect(user.reset_password_sent_at).to be_present
+      end
     end
 
-    context 'with invalid email' do
+    context 'with non-existent email' do
       it 'returns not found response' do
         post :create, params: invalid_params, format: :json
 
@@ -53,20 +61,22 @@ RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
       end
 
       it 'does not send email' do
-        expect do
-          post :create, params: invalid_params, format: :json
-        end.not_to(change { ActionMailer::Base.deliveries.count })
+        initial_count = ActionMailer::Base.deliveries.count
+
+        post :create, params: invalid_params, format: :json
+
+        expect(ActionMailer::Base.deliveries.count).to eq(initial_count)
       end
     end
   end
 
   describe 'PUT #update' do
-    let(:reset_password_token) { user.send_reset_password_instructions }
+    let(:reset_token) { user.send_reset_password_instructions }
 
     let(:valid_params) do
       {
         user: {
-          reset_password_token: reset_password_token,
+          reset_password_token: reset_token,
           password: 'newpassword123',
           password_confirmation: 'newpassword123',
         },
@@ -76,15 +86,25 @@ RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
     let(:invalid_params) do
       {
         user: {
-          reset_password_token: 'invalid_token',
+          reset_password_token: reset_token,
+          password: 'newpassword123',
+          password_confirmation: 'different_password',
+        },
+      }
+    end
+
+    let(:expired_token_params) do
+      {
+        user: {
+          reset_password_token: 'expired_or_invalid_token',
           password: 'newpassword123',
           password_confirmation: 'newpassword123',
         },
       }
     end
 
-    context 'with valid token and password' do
-      it 'updates the password' do
+    context 'with valid reset token and matching passwords' do
+      it 'returns success response' do
         put :update, params: valid_params, format: :json
 
         expect(response).to have_http_status(:ok)
@@ -93,41 +113,49 @@ RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
         expect(json_response['status']['message']).to eq('Password updated successfully.')
       end
 
-      it 'allows user to login with new password' do
+      it 'updates user password' do
+        old_encrypted_password = user.encrypted_password
         put :update, params: valid_params, format: :json
 
         user.reload
-        expect(user.valid_password?('newpassword123')).to be true
+        expect(user.encrypted_password).not_to eq(old_encrypted_password)
+        expect(user.valid_password?('newpassword123')).to be_truthy
       end
-    end
 
-    context 'with invalid token' do
-      it 'returns unprocessable entity response' do
-        put :update, params: invalid_params, format: :json
+      it 'clears reset password token' do
+        put :update, params: valid_params, format: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to include('Password reset failed.')
+        user.reload
+        expect(user.reset_password_token).to be_nil
+        expect(user.reset_password_sent_at).to be_nil
       end
     end
 
     context 'with mismatched passwords' do
-      let(:mismatched_params) do
-        {
-          user: {
-            reset_password_token: reset_password_token,
-            password: 'newpassword123',
-            password_confirmation: 'differentpassword',
-          },
-        }
-      end
-
       it 'returns validation error' do
-        put :update, params: mismatched_params, format: :json
+        put :update, params: invalid_params, format: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
         json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to include('Password reset failed.')
+        expect(json_response['status']['message']).to include('Password confirmation doesn\'t match Password')
+      end
+
+      it 'does not update password' do
+        old_encrypted_password = user.encrypted_password
+        put :update, params: invalid_params, format: :json
+
+        user.reload
+        expect(user.encrypted_password).to eq(old_encrypted_password)
+      end
+    end
+
+    context 'with invalid or expired token' do
+      it 'returns validation error' do
+        put :update, params: expired_token_params, format: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        json_response = JSON.parse(response.body)
+        expect(json_response['status']['message']).to include('Reset password token is invalid')
       end
     end
   end
