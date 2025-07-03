@@ -1,23 +1,24 @@
 # frozen_string_literal: true
 
-module Api
-  module V1
-    class BaseController < ApplicationController
-      before_action :authenticate_user!
+class Api::V1::BaseController < ApplicationController
+  respond_to :json
 
-      private
+  private
 
-      def authenticate_user!
-        # Let Devise handle JWT authentication
-        super
-      rescue
-        render json: {
-          status: {
-            code: 401,
-            message: 'You need to sign in or sign up before continuing.',
-          },
-        }, status: :unauthorized
-      end
-    end
+  def current_user
+    @current_user ||= super || User.find_by(id: payload['sub'])
+  end
+
+  def payload
+    auth_header = request.headers['Authorization']
+    token = auth_header.split.last if auth_header
+    @payload ||= decode_token(token) if token
+  rescue JWT::DecodeError => e
+    Rails.logger.error "JWT Decode Error: #{e.message}"
+    nil
+  end
+
+  def decode_token(token)
+    JWT.decode(token, Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base)[0]
   end
 end

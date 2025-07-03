@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Users::ConfirmationsController, type: :controller do
+RSpec.describe Api::V1::Users::ConfirmationsController, type: :controller do
   let(:user) { create(:user, :unconfirmed) }
 
   before do

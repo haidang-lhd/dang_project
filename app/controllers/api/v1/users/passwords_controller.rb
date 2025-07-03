@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class Users::PasswordsController < Devise::PasswordsController
+class Api::V1::Users::PasswordsController < Devise::PasswordsController
   respond_to :json
 
-  # POST /users/password
+  # POST /api/v1/users/password
   def create
     self.resource = resource_class.send_reset_password_instructions(resource_params)
     yield resource if block_given?
@@ -24,7 +24,7 @@ class Users::PasswordsController < Devise::PasswordsController
     end
   end
 
-  # PUT /users/password
+  # PUT /api/v1/users/password
   def update
     self.resource = resource_class.reset_password_by_token(resource_params)
     yield resource if block_given?

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Users::SessionsController < Devise::SessionsController
+class Api::V1::Users::SessionsController < Devise::SessionsController
   include RackSessionsFix
   respond_to :json
 
@@ -32,7 +32,7 @@ class Users::SessionsController < Devise::SessionsController
 
   def respond_to_on_destroy
     # Check if user is authenticated before destroying session
-    if user_signed_in?
+    if current_user
       render json: {
         status: {
           code: 200,

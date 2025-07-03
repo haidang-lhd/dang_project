@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Users::PasswordsController, type: :controller do
+RSpec.describe Api::V1::Users::PasswordsController, type: :controller do
   let(:user) { create(:user, :confirmed) }
 
   before do
@@ -61,9 +61,11 @@ RSpec.describe Users::PasswordsController, type: :controller do
       end
 
       it 'does not send email' do
-        expect do
-          post :create, params: invalid_params, format: :json
-        end.not_to(change { ActionMailer::Base.deliveries.count })
+        initial_count = ActionMailer::Base.deliveries.count
+
+        post :create, params: invalid_params, format: :json
+
+        expect(ActionMailer::Base.deliveries.count).to eq(initial_count)
       end
     end
   end

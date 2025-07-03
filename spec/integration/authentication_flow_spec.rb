@@ -14,7 +14,7 @@ RSpec.describe 'Authentication Integration', type: :request do
   describe 'Complete Authentication Flow' do
     it 'allows user to register, confirm, login, and access protected resources' do
       # Step 1: User Registration
-      post '/signup', params: { user: user_attributes }, as: :json
+      post '/api/v1/users/signup', params: { user: user_attributes }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']['message']).to eq('Signed up successfully.')
@@ -24,7 +24,7 @@ RSpec.describe 'Authentication Integration', type: :request do
       expect(user.confirmed?).to be_falsey
 
       # Step 2: Login should fail for unconfirmed user
-      post '/login', params: {
+      post '/api/v1/users/login', params: {
         user: {
           email: user_attributes[:email],
           password: user_attributes[:password],
@@ -35,7 +35,7 @@ RSpec.describe 'Authentication Integration', type: :request do
 
       # Step 3: Confirm account
       confirmation_token = user.confirmation_token
-      get '/confirmation', params: { confirmation_token: confirmation_token }, as: :json
+      get '/api/v1/users/confirmation', params: { confirmation_token: confirmation_token }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']['message']).to eq('Account confirmed successfully.')
@@ -44,7 +44,7 @@ RSpec.describe 'Authentication Integration', type: :request do
       expect(user.confirmed?).to be_truthy
 
       # Step 4: Login should now succeed
-      post '/login', params: {
+      post '/api/v1/users/login', params: {
         user: {
           email: user_attributes[:email],
           password: user_attributes[:password],
@@ -66,7 +66,7 @@ RSpec.describe 'Authentication Integration', type: :request do
       expect(response).to have_http_status(:ok)
 
       # Step 6: Logout
-      delete '/logout', headers: { 'Authorization' => "Bearer #{jwt_token}" }, as: :json
+      delete '/api/v1/users/logout', headers: { 'Authorization' => "Bearer #{jwt_token}" }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']['message']).to eq('Logged out successfully.')
@@ -78,7 +78,7 @@ RSpec.describe 'Authentication Integration', type: :request do
 
     it 'allows user to reset password via email' do
       # Step 1: Request password reset
-      post '/password', params: { user: { email: user.email } }, as: :json
+      post '/api/v1/users/password', params: { user: { email: user.email } }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']['message']).to eq('Password reset instructions sent successfully.')
@@ -93,7 +93,7 @@ RSpec.describe 'Authentication Integration', type: :request do
 
       new_password = 'newpassword123'
 
-      put '/password', params: {
+      put '/api/v1/users/password', params: {
         user: {
           reset_password_token: raw_token,
           password: new_password,
@@ -105,7 +105,7 @@ RSpec.describe 'Authentication Integration', type: :request do
       expect(json_response['status']['message']).to eq('Password updated successfully.')
 
       # Step 3: Login with new password
-      post '/login', params: {
+      post '/api/v1/users/login', params: {
         user: {
           email: user.email,
           password: new_password,
@@ -120,7 +120,7 @@ RSpec.describe 'Authentication Integration', type: :request do
   describe 'Error Handling' do
     it 'handles validation errors properly' do
       # Invalid email format
-      post '/signup', params: {
+      post '/api/v1/users/signup', params: {
         user: {
           email: 'invalid-email',
           password: 'short',
