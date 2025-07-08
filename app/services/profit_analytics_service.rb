@@ -45,8 +45,16 @@ class ProfitAnalyticsService
     asset_profit_percentage = calculate_profit_percentage(asset_profit, asset_invested)
 
     update_category_totals(category_name, category_data, asset_invested, asset_current_value, asset_profit)
-    add_asset_to_category(category_name, category_data, asset, asset_invested, asset_current_value,
-                          asset_profit, asset_profit_percentage, asset_quantity)
+
+    asset_data = {
+      asset: asset,
+      invested: asset_invested,
+      current_value: asset_current_value,
+      profit: asset_profit,
+      profit_percentage: asset_profit_percentage,
+      quantity: asset_quantity,
+    }
+    add_asset_to_category(category_name, category_data, asset_data)
   end
 
   def initialize_category_data(category_name, category_data)
@@ -82,15 +90,16 @@ class ProfitAnalyticsService
     category_data[category_name][:profit] += profit
   end
 
-  def add_asset_to_category(category_name, category_data, asset, invested, current_value, profit, profit_percentage, quantity)
+  def add_asset_to_category(category_name, category_data, asset_data)
+    asset = asset_data[:asset]
     category_data[category_name][:assets] << {
       id: asset.id,
       name: asset.name,
-      invested: invested.round(2),
-      current_value: current_value.round(2),
-      profit: profit.round(2),
-      profit_percentage: profit_percentage.round(2),
-      quantity: quantity.round(4),
+      invested: asset_data[:invested].round(2),
+      current_value: asset_data[:current_value].round(2),
+      profit: asset_data[:profit].round(2),
+      profit_percentage: asset_data[:profit_percentage].round(2),
+      quantity: asset_data[:quantity].round(4),
       current_price: asset.current_price.round(2),
     }
   end
