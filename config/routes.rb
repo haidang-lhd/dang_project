@@ -36,9 +36,6 @@ Rails.application.routes.draw do
       # New endpoints for price sync and profit analytics
       post 'asset_prices/sync', to: 'asset_prices#sync'
       get 'profit_analytics/calculate_profit', to: 'profit_analytics#calculate_profit'
-
-      # Test endpoint to verify WebSocket functionality
-      post 'test/create_asset_price', to: 'test#create_test_asset_price'
     end
   end
 end
