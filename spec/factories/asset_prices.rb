@@ -21,28 +21,8 @@
 #
 FactoryBot.define do
   factory :asset_price do
-    price { Faker::Number.decimal(l_digits: 5, r_digits: 2) }
-    synced_at { Time.current }
     association :asset
-
-    trait :historical do
-      synced_at { Faker::Time.between(from: 1.year.ago, to: Time.current) }
-    end
-
-    trait :recent do
-      synced_at { 1.day.ago }
-    end
-
-    trait :current do
-      synced_at { Time.current }
-    end
-
-    trait :high_price do
-      price { Faker::Number.between(from: 1000, to: 10_000) }
-    end
-
-    trait :low_price do
-      price { Faker::Number.between(from: 1, to: 100) }
-    end
+    price { Faker::Number.decimal(l_digits: 3, r_digits: 2) }
+    synced_at { Time.current }
   end
 end

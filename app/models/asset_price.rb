@@ -24,4 +24,31 @@ class AssetPrice < ApplicationRecord
 
   validates :price, presence: true
   validates :synced_at, presence: true
+
+  after_create :broadcast_price_update
+
+  private
+
+  def broadcast_price_update
+    # Broadcast to all users who might be interested in this asset price update
+    Rails.logger.info "Broadcasting asset price update for asset #{asset_id}"
+
+    broadcast_data = {
+      asset_price: {
+        id: id,
+        asset_id: asset_id,
+        asset_name: asset.name,
+        price: price.to_f,
+        synced_at: synced_at.iso8601,
+        category: asset.category.name,
+      },
+      type: 'asset_price_created',
+      timestamp: Time.current.iso8601,
+    }
+
+    ActionCable.server.broadcast('asset_price_updates', broadcast_data)
+    Rails.logger.info "Broadcasted: #{broadcast_data}"
+  rescue => e
+    Rails.logger.error "Failed to broadcast asset price update: #{e.message}"
+  end
 end

@@ -46,8 +46,8 @@ Rails.application.configure do
     address: 'smtp.gmail.com',
     port: 587,
     domain: 'gmail.com',
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['APP_PASSWORD'] || ENV['GMAIL_PASSWORD'],
+    user_name: ENV.fetch('GMAIL_USERNAME', nil),
+    password: ENV['APP_PASSWORD'] || ENV.fetch('GMAIL_PASSWORD', nil),
     authentication: 'plain',
     enable_starttls_auto: true,
   }
@@ -77,7 +77,7 @@ Rails.application.configure do
   config.action_view.annotate_rendered_view_with_filenames = true
 
   # Uncomment if you wish to allow Action Cable access from any origin.
-  # config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.disable_request_forgery_protection = true
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true

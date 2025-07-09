@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
+  mount ActionCable.server => '/cable'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -31,6 +32,10 @@ Rails.application.routes.draw do
       resources :assets, only: %i[index]
       resources :categories, only: %i[index]
       resources :investment_transactions, only: %i[index show create update destroy]
+
+      # New endpoints for price sync and profit analytics
+      post 'asset_prices/sync', to: 'asset_prices#sync'
+      get 'profit_analytics/calculate_profit', to: 'profit_analytics#calculate_profit'
     end
   end
 end
