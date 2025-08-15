@@ -676,3 +676,54 @@ curl -X GET "http://localhost:3000/api/v1/profit_analytics/calculate_detail_prof
 
 - `categories`: An array of objects, each summarizing a category's financial performance based on detailed transactions.
 - `portfolio_summary`: An object summarizing the financial performance of the entire portfolio based on detailed transactions.
+
+### Calculate Profit Detail
+
+Calculates the detailed profit for each investment transaction up to the current date, grouped by category and asset.
+
+**Endpoint:** `GET /api/v1/profit_analytics/calculate_profit_detail`
+
+**Response Format:**
+```json
+{
+  "detailed_data": {
+    "Category1": {
+      "Asset1": [
+        {
+          "transaction_id": 1,
+          "asset_name": "Asset1",
+          "category_name": "Category1",
+          "quantity": 10,
+          "nav": 100,
+          "invested": 1000.0,
+          "current_value": 1200.0,
+          "profit": 200.0,
+          "profit_percentage": 20.0
+        }
+      ]
+    },
+    "Category2": {
+      "Asset2": [
+        {
+          "transaction_id": 2,
+          "asset_name": "Asset2",
+          "category_name": "Category2",
+          "quantity": 5,
+          "nav": 200,
+          "invested": 1000.0,
+          "current_value": 750.0,
+          "profit": -250.0,
+          "profit_percentage": -25.0
+        }
+      ]
+    }
+  }
+}
+```
+
+**Example curl request:**
+```bash
+curl -X GET "http://localhost:3000/api/v1/profit_analytics/calculate_profit_detail" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
