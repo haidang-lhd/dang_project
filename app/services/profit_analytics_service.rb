@@ -32,6 +32,33 @@ class ProfitAnalyticsService
     }
   end
 
+  def calculate_profit_detail
+    transactions = user.investment_transactions.includes(:asset, asset: :category)
+
+    detailed_data = transactions.group_by { |t| t.asset.category.name }.transform_values do |category_transactions|
+      category_transactions.group_by { |t| t.asset.name }.transform_values do |asset_transactions|
+        asset_transactions.map do |transaction|
+          {
+            transaction_id: transaction.id,
+            asset_name: transaction.asset.name,
+            category_name: transaction.asset.category.name,
+            quantity: transaction.quantity,
+            nav: transaction.nav,
+            invested: (transaction.quantity * transaction.nav).round(2),
+            current_value: (transaction.quantity * transaction.asset.current_price).round(2),
+            profit: ((transaction.quantity * transaction.asset.current_price) - (transaction.quantity * transaction.nav)).round(2),
+            profit_percentage: calculate_profit_percentage(
+              (transaction.quantity * transaction.asset.current_price) - (transaction.quantity * transaction.nav),
+              transaction.quantity * transaction.nav
+            ).round(2),
+          }
+        end
+      end
+    end
+
+    { detailed_data: detailed_data }
+  end
+
   private
 
   def process_asset_transactions(asset, asset_transactions, category_data)

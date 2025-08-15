@@ -185,4 +185,17 @@ RSpec.describe Api::V1::ProfitAnalyticsController, type: :controller do
       end
     end
   end
+
+  describe 'GET #calculate_profit_detail' do
+    it 'returns detailed profit data' do
+      detailed_data = { detailed_data: { 'Category1' => [{ transaction_id: 1, asset_name: 'Asset1', category_name: 'Category1', quantity: 10, nav: 100, invested: 1000, current_value: 1200, profit: 200, profit_percentage: 20.0 }] } }
+      allow(ProfitAnalyticsService).to receive(:new).with(user).and_return(mock_service)
+      allow(mock_service).to receive(:calculate_profit_detail).and_return(detailed_data)
+
+      get :calculate_profit_detail, format: :json
+
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)).to eq(JSON.parse(detailed_data.to_json))
+    end
+  end
 end
