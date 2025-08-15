@@ -8,6 +8,15 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+user = User.first
+
+user ||= User.find_or_create_by!(email: "haidang.lhd.lhd@gmail.com") do |u|
+  u.password = "Haidang_06092000"
+  u.password_confirmation = "Haidang_06092000"
+end
+
+user.confirm
+
 # Create default categories for assets
 [ "Stocks", "Gold", "Bonds", "Real Estate", "Cryptocurrency", "Investment Fund Certificates" ].each do |category_name|
   Category.find_or_create_by!(name: category_name)
@@ -47,7 +56,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "token",
   date: Date.new(2025, 8, 6),
-  user: User.first
+  user: user
 )
 # Buy 568.35 USDT at 26,395 VND on June 10, 2025
 InvestmentTransaction.create!(
@@ -58,7 +67,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "token",
   date: Date.new(2025, 6, 10),
-  user: User.first
+  user: user
 )
 
 # Investment Fund Certificates
@@ -71,7 +80,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 7, 20),
-  user: User.first
+  user: user
 )
 
 # Buy 20.17 VESAF at 24779.55 VND on July 20,2023
@@ -83,7 +92,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 7, 20),
-  user: User.first
+  user: user
 )
 
 # Buy 73.68 VSEEF at 24144.31 VND on September 7, 2023
@@ -95,7 +104,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 9, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 18.42 VESAF at 24144.31 VND on September 7, 2023
@@ -107,7 +116,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 9, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 127.43 VESAF at 26383.06 VND on October 3, 2023
@@ -119,7 +128,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 10, 3),
-  user: User.first
+  user: user
 )
 
 # Buy 77.93 VESAF at 25662.03 VND on October 4, 2023
@@ -131,7 +140,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 10, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 39.35 VESAF at 25441.74 VND on October 24, 2023
@@ -143,7 +152,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 10, 24),
-  user: User.first
+  user: user
 )
 
 # Buy 122.41 VESAF at 24507.40 VND on November 8, 2023
@@ -155,7 +164,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 11, 8),
-  user: User.first
+  user: user
 )
 
 # Buy 116.69 VESAF at 25707.10 VND on December 5, 2023
@@ -167,7 +176,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2023, 12, 5),
-  user: User.first
+  user: user
 )
 
 # Buy 115.71 VESAF at 25926.10 VND on January 4, 2024
@@ -179,7 +188,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 1, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 185.59 VESAF at 26940.13 VND on February 2, 2024
@@ -191,7 +200,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 2, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 182.15 VESAF at 27449.89 VND on February 7, 2024
@@ -203,7 +212,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 2, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 175.88 VESAF at 28427.46 VND on March 5, 2024
@@ -215,7 +224,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 3, 5),
-  user: User.first
+  user: user
 )
 
 # Buy 238.13 VESAF at 29395.44 VND on April 4, 2024
@@ -227,7 +236,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 4, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 68.03 VESAF at 29395.44 VND on April 4, 2024
@@ -239,7 +248,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 4, 4),
-  user: User.first
+  user: user
 )
 # Buy 245.57 VESAF at 28504.65 VND on May 3, 2024
 InvestmentTransaction.create!(
@@ -250,7 +259,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 5, 3),
-  user: User.first
+  user: user
 )
 
 # Buy 163.04 VESAF at 30667.28 VND on Jun 4, 2024
@@ -262,7 +271,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 6, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 223.66 VESAF at 31296.52 VND on July 5, 2024
@@ -274,7 +283,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 7, 5),
-  user: User.first
+  user: user
 )
 
 # Buy 235.34 VESAF at 29743.99 VND on August 2, 2024
@@ -286,7 +295,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 8, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 229.70 VESAF at 30473.49 VND on September 6, 2024
@@ -298,7 +307,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 9, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 496.83 VESAF at 30191.11 VND on September 11, 2024
@@ -310,7 +319,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 9, 11),
-  user: User.first
+  user: user
 )
 
 # Buy 162.41 VESAF at 30784.67 VND on October 8, 2024
@@ -322,7 +331,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 10, 8),
-  user: User.first
+  user: user
 )
 
 # Buy 164.96 VESAF at 30309.07 VND on November 5, 2024
@@ -334,7 +343,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 11, 5),
-  user: User.first
+  user: user
 )
 
 # Buy 257.05 VESAF at 31121.70 VND on January 6, 2025
@@ -346,7 +355,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 1, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 224.09 VESAF at 31236.12 VND on February 6, 2025
@@ -358,7 +367,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 2, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 64.73 VESAF at 30892.91 VND on February 18, 2025
@@ -370,7 +379,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 2, 18),
-  user: User.first
+  user: user
 )
 
 # Buy 126.18 VESAF at 31700.37 VND on March 4, 2025
@@ -382,7 +391,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 84 VESAF at 31546.37 on March 6, 2025
@@ -394,7 +403,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 65.53 VESAF at 30519.67 on April 2, 2025
@@ -406,7 +415,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 39.03 VESAF at 25614.98 on April 9, 2025
@@ -418,7 +427,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 9),
-  user: User.first
+  user: user
 )
 
 # Buy 39.03 VESAF at 25614.98 on April 9, 2025
@@ -430,7 +439,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 9),
-  user: User.first
+  user: user
 )
 
 # Buy 141.90 VESAF at 28188.23 on May 7, 2025
@@ -442,7 +451,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 5, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 169.45 VESAF at 29506.32 on Jun 2, 2025
@@ -454,7 +463,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 6, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 160.41 VESAF at 31168.45 on July 7, 2025
@@ -466,7 +475,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 7, 7),
-  user: User.first
+  user: user
 )
 
 
@@ -479,7 +488,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 3, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 103.10 VEOF at 29096.49 on April 2, 2024
@@ -491,7 +500,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 4, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 106.15 VEOF at 28258.27 on May 3, 2024
@@ -503,7 +512,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 5, 3),
-  user: User.first
+  user: user
 )
 
 # Buy 166.5 VEOF at 30029.57 on June 4, 2024
@@ -515,7 +524,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 6, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 169.54 VEOF at 29490.25 on September 11, 2024
@@ -527,7 +536,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 9, 11),
-  user: User.first
+  user: user
 )
 
 # Buy 66.91 VEOF at 29890.25 on November 5, 2024
@@ -539,7 +548,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 11, 5),
-  user: User.first
+  user: user
 )
 
 # Buy 65.05 VEOF at 30741.15 on January 6, 2025
@@ -551,7 +560,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 1, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 32.21 VEOF at 31037.18 on February 6, 2024
@@ -563,7 +572,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 2, 6),
-  user: User.first
+  user: user
 )
 
 
@@ -576,7 +585,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2024, 2, 18),
-  user: User.first
+  user: user
 )
 
 # Buy 63.50 VEOF at 31491.49 on March 4, 2025
@@ -588,7 +597,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 79.85 VEOF at 31306.04 on March 6, 2025
@@ -600,7 +609,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 32.68 VEOF at 30598.35 on April 2, 2025
@@ -612,7 +621,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 39.02 VEOF at 25621.83 on April 9, 2025
@@ -624,7 +633,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 9),
-  user: User.first
+  user: user
 )
 
 # Buy 72.72 VEOF at 27502.36 on May 7, 2025
@@ -636,7 +645,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 5, 7),
-  user: User.first
+  user: user
 )
 
 
@@ -649,7 +658,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 229.49 VDEF at 10893.63 on March 6, 2025
@@ -661,7 +670,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 94.94 VDEF at 10532.15 on April 2, 2025
@@ -673,7 +682,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 2),
-  user: User.first
+  user: user
 )
 # Buy 113.30 VDEF at 8825.75 on April 9, 2025
 InvestmentTransaction.create!(
@@ -684,7 +693,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 9),
-  user: User.first
+  user: user
 )
 
 # Buy 113.30 VDEF at 9141.73 on May 7, 2025
@@ -696,7 +705,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 5, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 132.67 VMEEF at 15073.95 on February 6, 2025
@@ -708,7 +717,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 2, 6),
-  user: User.first
+  user: user
 )
 
 # Buy 133.84 VMEEF at 14942.17 on on February 18, 2025
@@ -720,7 +729,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 2, 18),
-  user: User.first
+  user: user
 )
 
 # Buy 130.59 VMEEF at 15315.04 on March 4, 2025
@@ -732,7 +741,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 163.82 VMEEF at 15260.53 on March 6, 2025
@@ -744,7 +753,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 6),
-  user: User.first
+  user: user
 )
 # Buy 67.60 VMEEF at 14791.86 on April 2, 2025
 InvestmentTransaction.create!(
@@ -755,7 +764,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 80.07 VMEEF at 12488.36 on April 9, 2025
@@ -767,7 +776,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 9),
-  user: User.first
+  user: user
 )
 
 # Buy 217.77 VMEEF at 13776 on May 7, 2025
@@ -779,7 +788,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 5, 7),
-  user: User.first
+  user: user
 )
 
 # Buy 346.62 VMEEF at 14383.41 on Jun 2, 2025
@@ -791,7 +800,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 6, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 333.48 VMEEF at 14993.33 on July 1, 2025
@@ -803,7 +812,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 7, 1),
-  user: User.first
+  user: user
 )
 
 # Buy 56.38 DCDS at 88684.58 on July 1, 2025
@@ -815,7 +824,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 7, 4),
-  user: User.first
+  user: user
 )
 
 # Buy 58.57 DCDS at 85388.99 on Jun 2, 2025
@@ -827,7 +836,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 6, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 36.41 DCDS at 82392.20 on March 13, 2025
@@ -839,7 +848,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 13),
-  user: User.first
+  user: user
 )
 
 # Buy 70.79 DCDE at 28251.73 on July 1, 2025
@@ -851,7 +860,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 7, 1),
-  user: User.first
+  user: user
 )
 
 # Buy 36.03 DCDE at 27753.40 on April 2, 2025
@@ -863,7 +872,7 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 4, 2),
-  user: User.first
+  user: user
 )
 
 # Buy 104.39 DCDE at 28740.63 on March 13, 2025
@@ -875,5 +884,5 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 13),
-  user: User.first
+  user: user
 )

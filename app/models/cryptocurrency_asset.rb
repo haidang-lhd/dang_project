@@ -59,21 +59,21 @@ class CryptocurrencyAsset < Asset
 
         if vnd
           asset_prices.create!(price: vnd.to_f, synced_at: Time.current)
-          return vnd.to_f
+          vnd.to_f
         else
           Rails.logger.warn "CoinGecko returned no VND price for #{name} (id: #{cg_id}). Body: #{res.body}"
           asset_prices.create!(price: 0.0, synced_at: Time.current)
-          return 0.0
+          0.0
         end
       else
         Rails.logger.error "HTTP #{res.code} from CoinGecko for #{name} (id: #{cg_id}). Body: #{res.body}"
         asset_prices.create!(price: 0.0, synced_at: Time.current)
-        return 0.0
+        0.0
       end
     rescue StandardError => e
       Rails.logger.error "Failed to sync crypto price for #{name}: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
       asset_prices.create!(price: 0.0, synced_at: Time.current)
-      return 0.0
+      0.0
     end
   end
 end
