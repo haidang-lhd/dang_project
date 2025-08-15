@@ -21,21 +21,21 @@
 #  fk_rails_...  (category_id => categories.id)
 #
 class CryptocurrencyAsset < Asset
-    COINGECKO_IDS = {
-    'BTC'  => 'bitcoin',
-    'ETH'  => 'ethereum',
-    'BNB'  => 'binancecoin',
+  COINGECKO_IDS = {
+    'BTC' => 'bitcoin',
+    'ETH' => 'ethereum',
+    'BNB' => 'binancecoin',
     'USDT' => 'tether',
     'USDC' => 'usd-coin',
-    'SOL'  => 'solana',
-    'ADA'  => 'cardano',
-    'XRP'  => 'ripple',
+    'SOL' => 'solana',
+    'ADA' => 'cardano',
+    'XRP' => 'ripple',
     'DOGE' => 'dogecoin',
-    'TRX'  => 'tron',
-    'DOT'  => 'polkadot',
-    'MATIC'=> 'polygon',
+    'TRX' => 'tron',
+    'DOT' => 'polkadot',
+    'MATIC' => 'polygon',
     'AVAX' => 'avalanche-2',
-    'TON'  => 'the-open-network'
+    'TON' => 'the-open-network',
   }.freeze
 
   def sync_price
