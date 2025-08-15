@@ -51,6 +51,7 @@ class ProfitAnalyticsService
               (transaction.quantity * transaction.asset.current_price) - (transaction.quantity * transaction.nav),
               transaction.quantity * transaction.nav
             ).round(2),
+            investment_date: transaction.created_at.strftime('%Y-%m-%d')
           }
         end
       end

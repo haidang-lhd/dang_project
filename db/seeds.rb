@@ -95,11 +95,11 @@ InvestmentTransaction.create!(
   user: user
 )
 
-# Buy 73.68 VSEEF at 24144.31 VND on September 7, 2023
+# Buy 73.68 VESAF at 27144.31 VND on September 7, 2023
 InvestmentTransaction.create!(
-  asset: FundAsset.find_by(name: "VMEEF"),
+  asset: FundAsset.find_by(name: "VESAF"),
   quantity: 73.68,
-  nav: 24144.31,
+  nav: 27144.31,
   fee: 0.00,
   transaction_type: "buy",
   unit: "unit",
@@ -107,11 +107,11 @@ InvestmentTransaction.create!(
   user: user
 )
 
-# Buy 18.42 VESAF at 24144.31 VND on September 7, 2023
+# Buy 18.42 VESAF at 27144.31 VND on September 7, 2023
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VESAF"),
   quantity: 18.42,
-  nav: 24144.31,
+  nav: 27144.31,
   fee: 0.00,
   transaction_type: "buy",
   unit: "unit",
@@ -131,11 +131,11 @@ InvestmentTransaction.create!(
   user: user
 )
 
-# Buy 77.93 VESAF at 25662.03 VND on October 4, 2023
+# Buy 77.93 VESAF at 25662.04 VND on October 4, 2023
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VESAF"),
   quantity: 77.93,
-  nav: 25662.03,
+  nav: 25662.04,
   fee: 0.00,
   transaction_type: "buy",
   unit: "unit",
@@ -218,8 +218,8 @@ InvestmentTransaction.create!(
 # Buy 175.88 VESAF at 28427.46 VND on March 5, 2024
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VESAF"),
-  quantity: 180.12,
-  nav: 27560.00,
+  quantity: 175.88,
+  nav: 28427.46,
   fee: 0.00,
   transaction_type: "buy",
   unit: "unit",
@@ -576,10 +576,10 @@ InvestmentTransaction.create!(
 )
 
 
-# Buy 62.16 VEOF at 30693.39 on February 18, 2024
+# Buy 65.16 VEOF at 30693.39 on February 18, 2024
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VEOF"),
-  quantity: 62.16,
+  quantity: 65.16,
   nav: 30693.39,
   fee: 0.00,
   transaction_type: "buy",
@@ -696,10 +696,10 @@ InvestmentTransaction.create!(
   user: user
 )
 
-# Buy 113.30 VDEF at 9141.73 on May 7, 2025
+# Buy 109.38 VDEF at 9141.73 on May 7, 2025
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VDEF"),
-  quantity: 113.30,
+  quantity: 109.38,
   nav: 9141.73,
   fee: 0.00,
   transaction_type: "buy",
@@ -791,10 +791,10 @@ InvestmentTransaction.create!(
   user: user
 )
 
-# Buy 346.62 VMEEF at 14383.41 on Jun 2, 2025
+# Buy 347.62 VMEEF at 14383.41 on Jun 2, 2025
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VMEEF"),
-  quantity: 346.62,
+  quantity: 347.62,
   nav: 14383.41,
   fee: 0.00,
   transaction_type: "buy",

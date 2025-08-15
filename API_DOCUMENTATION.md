@@ -698,7 +698,8 @@ Calculates the detailed profit for each investment transaction up to the current
           "invested": 1000.0,
           "current_value": 1200.0,
           "profit": 200.0,
-          "profit_percentage": 20.0
+          "profit_percentage": 20.0,
+          "investment_date": "2025-08-15"
         }
       ]
     },
@@ -713,7 +714,8 @@ Calculates the detailed profit for each investment transaction up to the current
           "invested": 1000.0,
           "current_value": 750.0,
           "profit": -250.0,
-          "profit_percentage": -25.0
+          "profit_percentage": -25.0,
+          "investment_date": "2025-08-15"
         }
       ]
     }
