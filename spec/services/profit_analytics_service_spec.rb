@@ -206,4 +206,66 @@ RSpec.describe ProfitAnalyticsService do
       end
     end
   end
+
+  describe '#calculate_profit_detail' do
+    it 'returns detailed profit data grouped by category and asset' do
+      # Prepare categories
+      category1 = create(:category, name: 'Category1')
+      category2 = create(:category, name: 'Category2')
+
+      # Prepare assets
+      asset1 = create(:asset, name: 'Asset1', category: category1)
+      asset2 = create(:asset, name: 'Asset2', category: category2)
+
+      # Prepare transactions
+      transaction1 = create(:investment_transaction, user: user, asset: asset1, quantity: 10, nav: 100)
+      transaction2 = create(:investment_transaction, user: user, asset: asset2, quantity: 5, nav: 200)
+
+      # Prepare asset prices
+      create(:asset_price, asset: asset1, price: 120, synced_at: Time.current)
+      create(:asset_price, asset: asset2, price: 150, synced_at: Time.current)
+
+      # Call the service method
+      result = service.calculate_profit_detail
+
+      # Expected result
+      expected_result = {
+        detailed_data: {
+          'Category1' => {
+            'Asset1' => [
+              {
+                transaction_id: transaction1.id,
+                asset_name: 'Asset1',
+                category_name: 'Category1',
+                quantity: 10,
+                nav: 100,
+                invested: 1000.0,
+                current_value: 1200.0,
+                profit: 200.0,
+                profit_percentage: 20.0,
+              },
+            ],
+          },
+          'Category2' => {
+            'Asset2' => [
+              {
+                transaction_id: transaction2.id,
+                asset_name: 'Asset2',
+                category_name: 'Category2',
+                quantity: 5,
+                nav: 200,
+                invested: 1000.0,
+                current_value: 750.0,
+                profit: -250.0,
+                profit_percentage: -25.0,
+              },
+            ],
+          },
+        },
+      }
+
+      # Assertions
+      expect(result).to eq(expected_result)
+    end
+  end
 end

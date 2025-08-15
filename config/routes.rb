@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       # New endpoints for price sync and profit analytics
       post 'asset_prices/sync', to: 'asset_prices#sync'
       get 'profit_analytics/calculate_profit', to: 'profit_analytics#calculate_profit'
+      get 'profit_analytics/calculate_profit_detail', to: 'profit_analytics#calculate_profit_detail'
     end
   end
 end
