@@ -21,33 +21,38 @@
 #  fk_rails_...  (category_id => categories.id)
 #
 class GoldAsset < Asset
+  DOJI_URL = 'http://update.giavang.doji.vn/banggia/doji_92411/92411'.freeze
+
   def sync_price
     # rubocop:disable Security/Open
-    url = 'https://giavang.pnj.com.vn/'
-    begin
-      html = URI.open(
-        url,
-        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Accept' => 'text/html'
-      )
-      doc = Nokogiri::HTML(html)
-      price_text = if name == 'SJC'
-                     doc.css('table tr:nth-child(2) td:nth-child(2)').text.strip
-                   else
-                     # TODO: Handle other gold asset names following the PNJ pricing logic, need to update later
-                     doc.css('table tr:nth-child(1) td:nth-child(3)').text.strip
-                   end
-      price_text = price_text.gsub('.', '').gsub(',', '.')
-      price = price_text.to_f * 100 # Convert to VND
-      asset_prices.create!(
-        price: price,
-        synced_at: Time.current
-      )
-      price
-    rescue => e
-      Rails.logger.error("Failed to sync price for GoldAsset #{id}: #{e.message}")
-      nil
+
+    require 'net/http'
+    require 'nokogiri'
+
+    uri = URI.parse(DOJI_URL)
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.get(uri.request_uri, {
+        'Accept' => 'application/json, text/plain, */*',
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+      })
     end
+    raise "HTTP #{res.code}" unless res.is_a?(Net::HTTPSuccess)
+
+    doc = Nokogiri::XML(res.body)
+    row_key = (name.to_s.strip.upcase == 'SJC') ? 'doji_1' : 'doji_3'
+    row = doc.at_xpath("//Row[@Key='#{row_key}']")
+    raise "Row not found for key #{row_key}" unless row
+
+    buy_text = row['Buy'].to_s # e.g. "12,450"
+    # "12,450" -> 12450 -> *1000 => 12_450_000 VND
+    price_vnd = buy_text.gsub(/[^\d]/, '').to_i * 1_000 if buy_text
+    price_vnd ||= 0
+
+    asset_prices.create!(price: price_vnd, synced_at: Time.current)
+    price_vnd
+  rescue => e
+    Rails.logger.error("Failed to sync price for GoldAsset #{id}: #{e.class} - #{e.message}")
+    nil
     # rubocop:enable Security/Open
   end
 end
