@@ -24,8 +24,6 @@ class GoldAsset < Asset
   DOJI_URL = 'http://update.giavang.doji.vn/banggia/doji_92411/92411'
 
   def sync_price
-    # rubocop:disable Security/Open
-
     require 'net/http'
     require 'nokogiri'
 
@@ -53,6 +51,5 @@ class GoldAsset < Asset
   rescue => e
     Rails.logger.error("Failed to sync price for GoldAsset #{id}: #{e.class} - #{e.message}")
     nil
-    # rubocop:enable Security/Open
   end
 end
