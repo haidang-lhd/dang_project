@@ -21,7 +21,7 @@
 #  fk_rails_...  (category_id => categories.id)
 #
 class GoldAsset < Asset
-  DOJI_URL = 'http://update.giavang.doji.vn/banggia/doji_92411/92411'.freeze
+  DOJI_URL = 'http://update.giavang.doji.vn/banggia/doji_92411/92411'
 
   def sync_price
     # rubocop:disable Security/Open
@@ -32,14 +32,14 @@ class GoldAsset < Asset
     uri = URI.parse(DOJI_URL)
     res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.get(uri.request_uri, {
-        'Accept' => 'application/json, text/plain, */*',
-        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-      })
+                 'Accept' => 'application/json, text/plain, */*',
+                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+               })
     end
     raise "HTTP #{res.code}" unless res.is_a?(Net::HTTPSuccess)
 
     doc = Nokogiri::XML(res.body)
-    row_key = (name.to_s.strip.upcase == 'SJC') ? 'doji_1' : 'doji_3'
+    row_key = name.to_s.strip.upcase == 'SJC' ? 'doji_1' : 'doji_3'
     row = doc.at_xpath("//Row[@Key='#{row_key}']")
     raise "Row not found for key #{row_key}" unless row
 
