@@ -155,6 +155,37 @@ RSpec.describe ProfitAnalyticsService do
       end
     end
 
+    context 'with sell transactions' do
+      before do
+        create(:asset_price, asset: asset, price: 60.0, synced_at: Time.current)
+
+        create(:investment_transaction,
+               user: user,
+               asset: asset,
+               quantity: 100,
+               nav: 50.0,
+               transaction_type: 'buy')
+
+        create(:investment_transaction,
+               user: user,
+               asset: asset,
+               quantity: 40,
+               nav: 70.0,
+               transaction_type: 'sell')
+      end
+
+      it 'deducts sold quantity and updates profit' do
+        result = service.calculate_profit
+        asset_data = result[:category_details]['Stocks'][:assets].first
+
+        expect(asset_data[:quantity]).to eq(60.0)
+        expect(asset_data[:invested]).to eq(2200.0)
+        expect(asset_data[:current_value]).to eq(3600.0)
+        expect(asset_data[:profit]).to eq(1400.0)
+        expect(asset_data[:profit_percentage]).to eq(63.64)
+      end
+    end
+
     context 'with loss scenario' do
       before do
         # Create asset price (lower than purchase price)

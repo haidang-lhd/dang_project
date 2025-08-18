@@ -96,11 +96,16 @@ class ProfitAnalyticsService
   end
 
   def calculate_asset_invested(asset_transactions)
-    asset_transactions.sum { |t| t.quantity * t.nav }
+    asset_transactions.sum do |t|
+      amount = t.quantity * t.nav
+      t.transaction_type == 'sell' ? -amount : amount
+    end
   end
 
   def calculate_asset_quantity(asset_transactions)
-    asset_transactions.sum(&:quantity)
+    asset_transactions.sum do |t|
+      t.transaction_type == 'sell' ? -t.quantity : t.quantity
+    end
   end
 
   def calculate_asset_current_value(asset_transactions, asset)
