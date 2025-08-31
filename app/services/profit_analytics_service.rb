@@ -86,14 +86,13 @@ class ProfitAnalyticsService
 
       asset_profit_percentage = calculate_profit_percentage(metrics[:profit], metrics[:invested])
 
-      update_category_totals(
-        category_name,
-        category_data,
+      values = CategoryUpdate.new(
         metrics[:invested],
         metrics[:current_value],
         metrics[:profit],
         metrics[:realized_profit]
       )
+      update_category_totals(category_name, category_data, values)
 
       # Asset snapshot: remaining quantity, unrealized on remaining, and cumulative realized
       category_data[category_name][:assets] << {
@@ -346,13 +345,15 @@ class ProfitAnalyticsService
     invested.to_f.positive? ? (profit.to_f / invested * 100.0) : 0.0
   end
 
+  CategoryUpdate = Struct.new(:invested, :current_value, :profit, :realized_profit)
+
   # Accumulate category totals
-  def update_category_totals(category_name, category_data, invested, current_value, profit, realized_profit)
+  def update_category_totals(category_name, category_data, values)
     data = category_data[category_name]
-    data[:invested]        += invested
-    data[:current_value]   += current_value
-    data[:profit]          += profit
-    data[:realized_profit] += realized_profit
+    data[:invested]        += values.invested
+    data[:current_value]   += values.current_value
+    data[:profit]          += values.profit
+    data[:realized_profit] += values.realized_profit
   end
 
   # Final rounding and derived percentages per category

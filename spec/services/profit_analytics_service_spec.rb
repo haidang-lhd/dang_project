@@ -13,16 +13,17 @@ RSpec.describe ProfitAnalyticsService do
   end
 
   # Helper to create transactions with consistent dates
-  def create_transaction(asset, type, quantity, price, fee = 0.0, date_offset = 0)
-    create(:investment_transaction,
-           user: user,
-           asset: asset,
-           transaction_type: type,
-           quantity: quantity,
-           nav: price,
-           fee: fee,
-           date: Time.current + date_offset.days,
-           created_at: Time.current + date_offset.days)
+  def create_transaction(transaction_attrs)
+    opts = {
+      user: user,
+      transaction_type: transaction_attrs[:type],
+      asset: transaction_attrs[:asset],
+      quantity: transaction_attrs[:quantity],
+      nav: transaction_attrs[:price],
+      fee: transaction_attrs[:fee] || 0.0,
+      created_at: Time.current + (transaction_attrs[:date_offset] || 0).days,
+    }
+    create(:investment_transaction, opts)
   end
 
   describe '#calculate_profit' do
@@ -41,7 +42,7 @@ RSpec.describe ProfitAnalyticsService do
 
     context 'with basic buy transactions' do
       before do
-        create_transaction(asset, 'buy', 10, 100) # Cost = 1000
+        create_transaction(asset: asset, type: 'buy', quantity: 10, price: 100) # Cost = 1000
       end
 
       it 'calculates metrics for a single buy' do
@@ -61,11 +62,11 @@ RSpec.describe ProfitAnalyticsService do
     context 'with buy and sell transactions (WAC)' do
       before do
         # 1. Buy 10 at $100 -> held: 10, cost: 1000, wac: 100
-        create_transaction(asset, 'buy', 10, 100, 0, 1)
+        create_transaction(asset: asset, type: 'buy', quantity: 10, price: 100, date_offset: 1)
         # 2. Buy 10 at $120 -> held: 20, cost: 1000 + 1200 = 2200, wac: 110
-        create_transaction(asset, 'buy', 10, 120, 0, 2)
+        create_transaction(asset: asset, type: 'buy', quantity: 10, price: 120, date_offset: 2)
         # 3. Sell 15 at $140 -> wac: 110
-        create_transaction(asset, 'sell', 15, 140, 0, 3)
+        create_transaction(asset: asset, type: 'sell', quantity: 15, price: 140, date_offset: 3)
       end
 
       it 'calculates profit correctly using WAC' do
@@ -100,8 +101,8 @@ RSpec.describe ProfitAnalyticsService do
 
     context 'with full liquidation' do
       before do
-        create_transaction(asset, 'buy', 10, 100, 10, 1) # Cost = 1010
-        create_transaction(asset, 'sell', 10, 120, 5, 2) # Proceeds = 1195
+        create_transaction(asset: asset, type: 'buy', quantity: 10, price: 100, fee: 10, date_offset: 1) # Cost = 1010
+        create_transaction(asset: asset, type: 'sell', quantity: 10, price: 120, fee: 5, date_offset: 2) # Proceeds = 1195
       end
 
       it 'handles zero remaining quantity and cost' do
@@ -125,9 +126,9 @@ RSpec.describe ProfitAnalyticsService do
       before do
         create(:asset_price, asset: btc, price: 60_000)
         # Stock: Buy 10 AAPL @ 100
-        create_transaction(asset, 'buy', 10, 100, 0, 1)
+        create_transaction(asset: asset, type: 'buy', quantity: 10, price: 100, date_offset: 1)
         # Crypto: Buy 0.1 BTC @ 50000
-        create_transaction(btc, 'buy', 0.1, 50_000, 0, 1)
+        create_transaction(asset: btc, type: 'buy', quantity: 0.1, price: 50_000, date_offset: 1)
       end
 
       it 'aggregates totals and separates categories correctly' do
@@ -159,9 +160,9 @@ RSpec.describe ProfitAnalyticsService do
 
   describe '#calculate_profit_detail' do
     context 'with buy and sell transactions' do
-      let!(:buy1) { create_transaction(asset, 'buy', 10, 100, 10, 1) } # Cost=1010, WAC=101
-      let!(:buy2) { create_transaction(asset, 'buy', 5, 110, 5, 2) } # Cost=555, TotalCost=1565, TotalQty=15, WAC=104.33
-      let!(:sell1) { create_transaction(asset, 'sell', 8, 130, 8, 3) } # Proceeds=1032
+      let!(:buy1) { create_transaction(asset: asset, type: 'buy', quantity: 10, price: 100, fee: 10, date_offset: 1) } # Cost=1010, WAC=101
+      let!(:buy2) { create_transaction(asset: asset, type: 'buy', quantity: 5, price: 110, fee: 5, date_offset: 2) } # Cost=555, TotalCost=1565, TotalQty=15, WAC=104.33
+      let!(:sell1) { create_transaction(asset: asset, type: 'sell', quantity: 8, price: 130, fee: 8, date_offset: 3) } # Proceeds=1032
 
       it 'returns detailed transaction rows with correct WAC calculations' do
         result = service.calculate_profit_detail
@@ -205,8 +206,8 @@ RSpec.describe ProfitAnalyticsService do
 
     context 'when a sell would exceed holdings' do
       it 'raises an error' do
-        create_transaction(asset, 'buy', 5, 100)
-        create_transaction(asset, 'sell', 10, 120) # Oversell
+        create_transaction(asset: asset, type: 'buy', quantity: 5, price: 100)
+        create_transaction(asset: asset, type: 'sell', quantity: 10, price: 120) # Oversell
 
         expect { service.calculate_profit_detail }.to raise_error(StandardError, /Sell exceeds holdings/)
       end
