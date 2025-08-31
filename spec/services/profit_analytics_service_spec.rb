@@ -6,268 +6,210 @@ RSpec.describe ProfitAnalyticsService do
   let(:user) { create(:user) }
   let(:service) { described_class.new(user) }
   let(:category) { create(:category, name: 'Stocks') }
-  let(:asset) { create(:stock_asset, category: category, name: 'VIC') }
+  let(:asset) { create(:stock_asset, category: category, name: 'AAPL') }
 
-  describe '#initialize' do
-    it 'sets the user' do
-      expect(service.user).to eq(user)
-    end
+  before do
+    create(:asset_price, asset: asset, price: 150.0)
+  end
+
+  # Helper to create transactions with consistent dates
+  def create_transaction(asset, type, quantity, price, fee = 0.0, date_offset = 0)
+    create(:investment_transaction,
+           user: user,
+           asset: asset,
+           transaction_type: type,
+           quantity: quantity,
+           nav: price,
+           fee: fee,
+           date: Time.current + date_offset.days,
+           created_at: Time.current + date_offset.days)
   end
 
   describe '#calculate_profit' do
     context 'with no transactions' do
-      it 'returns empty data structure' do
+      it 'returns an empty but valid structure' do
         result = service.calculate_profit
-
-        expect(result[:category_details]).to eq({})
-        expect(result[:chart_data][:categories]).to eq([])
-        expect(result[:chart_data][:portfolio_summary][:total_invested]).to eq(0.0)
-        expect(result[:chart_data][:portfolio_summary][:total_current_value]).to eq(0.0)
-        expect(result[:chart_data][:portfolio_summary][:total_profit]).to eq(0.0)
-        expect(result[:chart_data][:portfolio_summary][:total_profit_percentage]).to eq(0.0)
+        expect(result[:category_details]).to be_empty
+        summary = result[:chart_data][:portfolio_summary]
+        expect(summary[:total_invested]).to eq(0.0)
+        expect(summary[:total_current_value]).to eq(0.0)
+        expect(summary[:total_profit]).to eq(0.0)
+        expect(summary[:total_realized_profit]).to eq(0.0)
+        expect(summary[:total_profit_percentage]).to eq(0.0)
       end
     end
 
-    context 'with transactions' do
+    context 'with basic buy transactions' do
       before do
-        # Create asset price first
-        create(:asset_price, asset: asset, price: 60.0, synced_at: Time.current)
-
-        create(:investment_transaction,
-               user: user,
-               asset: asset,
-               quantity: 100,
-               nav: 50.0,
-               transaction_type: 'buy')
-
-        create(:investment_transaction,
-               user: user,
-               asset: asset,
-               quantity: 50,
-               nav: 40.0,
-               transaction_type: 'buy')
+        create_transaction(asset, 'buy', 10, 100) # Cost = 1000
       end
 
-      it 'calculates profit correctly' do
+      it 'calculates metrics for a single buy' do
         result = service.calculate_profit
+        summary = result[:chart_data][:portfolio_summary]
 
-        # Total invested: (100 * 50) + (50 * 40) = 5000 + 2000 = 7000
-        # Total quantity: 100 + 50 = 150
-        # Current value: 150 * 60 = 9000
-        # Profit: 9000 - 7000 = 2000
-        # Profit percentage: (2000 / 7000) * 100 = 28.57%
+        # Remaining cost = 1000, Current value = 10 * 150 = 1500
+        # Unrealized profit = 500
+        expect(summary[:total_invested]).to eq(1000.0)
+        expect(summary[:total_current_value]).to eq(1500.0)
+        expect(summary[:total_profit]).to eq(500.0) # Unrealized
+        expect(summary[:total_realized_profit]).to eq(0.0)
+        expect(summary[:total_profit_percentage]).to be_within(0.01).of(50.0)
+      end
+    end
 
-        portfolio_summary = result[:chart_data][:portfolio_summary]
-        expect(portfolio_summary[:total_invested]).to eq(7000.0)
-        expect(portfolio_summary[:total_current_value]).to eq(9000.0)
-        expect(portfolio_summary[:total_profit]).to eq(2000.0)
-        expect(portfolio_summary[:total_profit_percentage]).to eq(28.57)
+    context 'with buy and sell transactions (WAC)' do
+      before do
+        # 1. Buy 10 at $100 -> held: 10, cost: 1000, wac: 100
+        create_transaction(asset, 'buy', 10, 100, 0, 1)
+        # 2. Buy 10 at $120 -> held: 20, cost: 1000 + 1200 = 2200, wac: 110
+        create_transaction(asset, 'buy', 10, 120, 0, 2)
+        # 3. Sell 15 at $140 -> wac: 110
+        create_transaction(asset, 'sell', 15, 140, 0, 3)
       end
 
-      it 'groups data by category correctly' do
+      it 'calculates profit correctly using WAC' do
         result = service.calculate_profit
 
-        expect(result[:category_details]).to have_key('Stocks')
-        expect(result[:category_details]['Stocks'][:invested]).to eq(7000.0)
-        expect(result[:category_details]['Stocks'][:current_value]).to eq(9000.0)
-        expect(result[:category_details]['Stocks'][:profit]).to eq(2000.0)
-        expect(result[:category_details]['Stocks'][:profit_percentage]).to eq(28.57)
+        # After sell:
+        # Cost basis for sale: 15 * 110 = 1650
+        # Sale proceeds: 15 * 140 = 2100
+        # Realized profit: 2100 - 1650 = 450
+        #
+        # Remaining position:
+        # Held qty: 20 - 15 = 5
+        # Remaining cost: 2200 - 1650 = 550
+        # Current value: 5 * 150 = 750
+        # Unrealized profit: 750 - 550 = 200
+
+        summary = result[:chart_data][:portfolio_summary]
+        expect(summary[:total_invested]).to eq(550.0)         # Remaining cost
+        expect(summary[:total_current_value]).to eq(750.0)    # Value of remaining shares
+        expect(summary[:total_profit]).to eq(200.0)           # Unrealized profit
+        expect(summary[:total_realized_profit]).to eq(450.0)
+        # Total profit % = unrealized / remaining_cost
+        expect(summary[:total_profit_percentage]).to be_within(0.01).of(36.36)
+
+        category_detail = result[:category_details]['Stocks']
+        expect(category_detail[:invested]).to eq(550.0)
+        expect(category_detail[:current_value]).to eq(750.0)
+        expect(category_detail[:profit]).to eq(200.0)
+        expect(category_detail[:realized_profit]).to eq(450.0)
+      end
+    end
+
+    context 'with full liquidation' do
+      before do
+        create_transaction(asset, 'buy', 10, 100, 10, 1) # Cost = 1010
+        create_transaction(asset, 'sell', 10, 120, 5, 2) # Proceeds = 1195
       end
 
-      it 'includes asset details' do
+      it 'handles zero remaining quantity and cost' do
         result = service.calculate_profit
 
-        assets = result[:category_details]['Stocks'][:assets]
-        expect(assets.length).to eq(1)
-
-        asset_data = assets.first
-        expect(asset_data[:id]).to eq(asset.id)
-        expect(asset_data[:name]).to eq('VIC')
-        expect(asset_data[:invested]).to eq(7000.0)
-        expect(asset_data[:current_value]).to eq(9000.0)
-        expect(asset_data[:profit]).to eq(2000.0)
-        expect(asset_data[:profit_percentage]).to eq(28.57)
-        expect(asset_data[:quantity]).to eq(150.0)
-        expect(asset_data[:current_price]).to eq(60.0)
-      end
-
-      it 'formats chart data correctly' do
-        result = service.calculate_profit
-
-        categories = result[:chart_data][:categories]
-        expect(categories.length).to eq(1)
-
-        category_data = categories.first
-        expect(category_data[:label]).to eq('Stocks')
-        expect(category_data[:invested]).to eq(7000.0)
-        expect(category_data[:current_value]).to eq(9000.0)
-        expect(category_data[:profit]).to eq(2000.0)
-        expect(category_data[:profit_percentage]).to eq(28.57)
+        # Realized profit = 1195 - 1010 = 185
+        # Remaining cost/qty/value should be zero
+        summary = result[:chart_data][:portfolio_summary]
+        expect(summary[:total_invested]).to eq(0.0)
+        expect(summary[:total_current_value]).to eq(0.0)
+        expect(summary[:total_profit]).to eq(0.0) # No unrealized profit
+        expect(summary[:total_realized_profit]).to eq(185.0)
+        expect(summary[:total_profit_percentage]).to eq(0.0)
       end
     end
 
     context 'with multiple categories' do
-      let(:crypto_category) { create(:category, name: 'Cryptocurrency') }
-      let(:crypto_asset) { create(:cryptocurrency_asset, category: crypto_category, name: 'BTC') }
+      let(:crypto_cat) { create(:category, name: 'Crypto') }
+      let(:btc) { create(:cryptocurrency_asset, category: crypto_cat, name: 'BTC') }
 
       before do
-        # Create asset prices
-        create(:asset_price, asset: asset, price: 60.0, synced_at: Time.current)
-        create(:asset_price, asset: crypto_asset, price: 50_000.0, synced_at: Time.current)
-
-        # Stock transaction
-        create(:investment_transaction,
-               user: user,
-               asset: asset,
-               quantity: 100,
-               nav: 50.0,
-               transaction_type: 'buy')
-
-        # Crypto transaction
-        create(:investment_transaction,
-               user: user,
-               asset: crypto_asset,
-               quantity: 1,
-               nav: 40_000.0,
-               transaction_type: 'buy')
+        create(:asset_price, asset: btc, price: 60_000)
+        # Stock: Buy 10 AAPL @ 100
+        create_transaction(asset, 'buy', 10, 100, 0, 1)
+        # Crypto: Buy 0.1 BTC @ 50000
+        create_transaction(btc, 'buy', 0.1, 50_000, 0, 1)
       end
 
-      it 'calculates totals across all categories' do
+      it 'aggregates totals and separates categories correctly' do
         result = service.calculate_profit
 
-        # Stock: 100 * 50 = 5000 invested, 100 * 60 = 6000 current
-        # Crypto: 1 * 40000 = 40000 invested, 1 * 50000 = 50000 current
-        # Total: 45000 invested, 56000 current, 11000 profit
+        # Stock: invested=1000, value=1500, unrealized=500
+        # Crypto: invested=5000, value=6000, unrealized=1000
+        summary = result[:chart_data][:portfolio_summary]
+        expect(summary[:total_invested]).to eq(6000.0)
+        expect(summary[:total_current_value]).to eq(7500.0)
+        expect(summary[:total_profit]).to eq(1500.0)
+        expect(summary[:total_realized_profit]).to eq(0.0)
 
-        portfolio_summary = result[:chart_data][:portfolio_summary]
-        expect(portfolio_summary[:total_invested]).to eq(45_000.0)
-        expect(portfolio_summary[:total_current_value]).to eq(56_000.0)
-        expect(portfolio_summary[:total_profit]).to eq(11_000.0)
-        expect(portfolio_summary[:total_profit_percentage]).to eq(24.44)
-      end
+        # Check category separation
+        expect(result[:category_details].keys).to contain_exactly('Stocks', 'Crypto')
+        expect(result[:category_details]['Stocks'][:invested]).to eq(1000.0)
+        expect(result[:category_details]['Crypto'][:invested]).to eq(5000.0)
 
-      it 'separates categories correctly' do
-        result = service.calculate_profit
+        # Check chart data for current value percentages
+        stock_chart = result[:chart_data][:categories].find { |c| c[:label] == 'Stocks' }
+        crypto_chart = result[:chart_data][:categories].find { |c| c[:label] == 'Crypto' }
 
-        expect(result[:category_details]).to have_key('Stocks')
-        expect(result[:category_details]).to have_key('Cryptocurrency')
-        expect(result[:chart_data][:categories].length).to eq(2)
-      end
-    end
-
-    context 'with loss scenario' do
-      before do
-        # Create asset price (lower than purchase price)
-        create(:asset_price, asset: asset, price: 60.0, synced_at: Time.current)
-
-        create(:investment_transaction,
-               user: user,
-               asset: asset,
-               quantity: 100,
-               nav: 80.0,
-               transaction_type: 'buy')
-      end
-
-      it 'handles negative profit correctly' do
-        result = service.calculate_profit
-
-        # Invested: 100 * 80 = 8000
-        # Current: 100 * 60 = 6000
-        # Loss: 6000 - 8000 = -2000
-        # Loss percentage: (-2000 / 8000) * 100 = -25%
-
-        portfolio_summary = result[:chart_data][:portfolio_summary]
-        expect(portfolio_summary[:total_invested]).to eq(8000.0)
-        expect(portfolio_summary[:total_current_value]).to eq(6000.0)
-        expect(portfolio_summary[:total_profit]).to eq(-2000.0)
-        expect(portfolio_summary[:total_profit_percentage]).to eq(-25.0)
-      end
-    end
-
-    context 'with zero invested amount' do
-      let(:zero_asset) { create(:stock_asset, category: category, name: 'ZERO') }
-
-      before do
-        create(:asset_price, asset: zero_asset, price: 100.0, synced_at: Time.current)
-
-        create(:investment_transaction,
-               user: user,
-               asset: zero_asset,
-               quantity: 0,
-               nav: 0,
-               transaction_type: 'buy')
-      end
-
-      it 'handles zero division safely' do
-        result = service.calculate_profit
-
-        expect(result[:category_details]['Stocks'][:profit_percentage]).to eq(0.0)
-        expect(result[:chart_data][:portfolio_summary][:total_profit_percentage]).to eq(0.0)
+        # Total value = 7500. Stock value = 1500 (20%). Crypto value = 6000 (80%)
+        expect(stock_chart[:current_value_percentage]).to be_within(0.01).of(20.0)
+        expect(crypto_chart[:current_value_percentage]).to be_within(0.01).of(80.0)
       end
     end
   end
 
   describe '#calculate_profit_detail' do
-    it 'returns detailed profit data grouped by category and asset' do
-      # Prepare categories
-      category1 = create(:category, name: 'Category1')
-      category2 = create(:category, name: 'Category2')
+    context 'with buy and sell transactions' do
+      let!(:buy1) { create_transaction(asset, 'buy', 10, 100, 10, 1) } # Cost=1010, WAC=101
+      let!(:buy2) { create_transaction(asset, 'buy', 5, 110, 5, 2) } # Cost=555, TotalCost=1565, TotalQty=15, WAC=104.33
+      let!(:sell1) { create_transaction(asset, 'sell', 8, 130, 8, 3) } # Proceeds=1032
 
-      # Prepare assets
-      asset1 = create(:asset, name: 'Asset1', category: category1)
-      asset2 = create(:asset, name: 'Asset2', category: category2)
+      it 'returns detailed transaction rows with correct WAC calculations' do
+        result = service.calculate_profit_detail
+        rows = result[:detailed_data]['Stocks']['AAPL']
 
-      # Prepare transactions
-      transaction1 = create(:investment_transaction, user: user, asset: asset1, quantity: 10, nav: 100)
-      transaction2 = create(:investment_transaction, user: user, asset: asset2, quantity: 5, nav: 200)
+        expect(rows.size).to eq(3)
 
-      # Prepare asset prices
-      create(:asset_price, asset: asset1, price: 120, synced_at: Time.current)
-      create(:asset_price, asset: asset2, price: 150, synced_at: Time.current)
+        # --- Row 1: First Buy ---
+        buy1_row = rows[0]
+        expect(buy1_row[:transaction_type]).to eq('buy')
+        expect(buy1_row[:invested]).to eq(1010.0) # 10*100 + 10
+        expect(buy1_row[:current_value]).to eq(1500.0) # 10 * 150
+        expect(buy1_row[:profit]).to eq(490.0) # Unrealized
+        expect(buy1_row[:realized_profit]).to eq(0.0)
+        expect(buy1_row[:cost_basis]).to eq(0.0)
 
-      # Call the service method
-      result = service.calculate_profit_detail
+        # --- Row 2: Second Buy ---
+        buy2_row = rows[1]
+        expect(buy2_row[:transaction_type]).to eq('buy')
+        expect(buy2_row[:invested]).to eq(555.0) # 5*110 + 5
+        expect(buy2_row[:current_value]).to eq(750.0) # 5 * 150
+        expect(buy2_row[:profit]).to eq(195.0) # Unrealized
+        expect(buy2_row[:realized_profit]).to eq(0.0)
 
-      # Expected result
-      expected_result = {
-        detailed_data: {
-          'Category1' => {
-            'Asset1' => [
-              {
-                transaction_id: transaction1.id,
-                asset_name: 'Asset1',
-                category_name: 'Category1',
-                quantity: 10,
-                nav: 100,
-                invested: 1000.0,
-                current_value: 1200.0,
-                profit: 200.0,
-                profit_percentage: 20.0,
-                investment_date: transaction1.created_at.strftime('%Y-%m-%d'),
-              },
-            ],
-          },
-          'Category2' => {
-            'Asset2' => [
-              {
-                transaction_id: transaction2.id,
-                asset_name: 'Asset2',
-                category_name: 'Category2',
-                quantity: 5,
-                nav: 200,
-                invested: 1000.0,
-                current_value: 750.0,
-                profit: -250.0,
-                profit_percentage: -25.0,
-                investment_date: transaction2.created_at.strftime('%Y-%m-%d'),
-              },
-            ],
-          },
-        },
-      }
+        # --- Row 3: The Sell ---
+        # WAC at time of sale: (1010 + 555) / 15 = 104.333
+        # Cost basis for sale: 8 * 104.333 = 834.67
+        # Proceeds: 8 * 130 - 8 = 1032
+        # Realized profit: 1032 - 834.67 = 197.33
+        sell1_row = rows[2]
+        expect(sell1_row[:transaction_type]).to eq('sell')
+        expect(sell1_row[:sale_proceeds]).to be_within(0.01).of(1032.0)
+        expect(sell1_row[:cost_basis]).to be_within(0.01).of(834.67)
+        expect(sell1_row[:realized_profit]).to be_within(0.01).of(197.33)
+        # For sells, `invested`, `current_value`, and `profit` mirror cost_basis, proceeds, and realized
+        expect(sell1_row[:invested]).to eq(sell1_row[:cost_basis])
+        expect(sell1_row[:current_value]).to eq(sell1_row[:sale_proceeds])
+        expect(sell1_row[:profit]).to eq(sell1_row[:realized_profit])
+      end
+    end
 
-      # Assertions
-      expect(result).to eq(expected_result)
+    context 'when a sell would exceed holdings' do
+      it 'raises an error' do
+        create_transaction(asset, 'buy', 5, 100)
+        create_transaction(asset, 'sell', 10, 120) # Oversell
+
+        expect { service.calculate_profit_detail }.to raise_error(StandardError, /Sell exceeds holdings/)
+      end
     end
   end
 end

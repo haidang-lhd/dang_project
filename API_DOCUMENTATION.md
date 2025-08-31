@@ -424,6 +424,76 @@ Error responses include a JSON object with an `error` or `errors` key:
 }
 ```
 
+### Calculate Profit Detail
+
+Returns a detailed breakdown of profit metrics for each transaction, using Weighted Average Cost (WAC) calculations.
+
+**Endpoint:** `GET /api/v1/profit_analytics/calculate_profit_detail`
+
+**Response Format (200 OK):**
+```json
+{
+  "detailed_data": {
+    "Category Name": {
+      "Asset Name": [
+        {
+          "transaction_id": 1,
+          "transaction_type": "buy",
+          "asset_name": "AAPL",
+          "category_name": "Stocks",
+          "quantity": 100.0,
+          "nav": 50.0,
+          "invested": 5000.0,
+          "current_value": 6000.0,
+          "profit": 1000.0,
+          "profit_percentage": 20.0,
+          "sale_proceeds": 0.0,
+          "cost_basis": 0.0,
+          "realized_profit": 0.0,
+          "investment_date": "2025-07-01"
+        },
+        {
+          "transaction_id": 2,
+          "transaction_type": "sell",
+          "asset_name": "AAPL",
+          "category_name": "Stocks",
+          "quantity": 50.0,
+          "nav": 70.0,
+          "invested": 2500.0,
+          "current_value": 3500.0,
+          "profit": 1000.0,
+          "profit_percentage": 40.0,
+          "sale_proceeds": 3500.0,
+          "cost_basis": 2500.0,
+          "realized_profit": 1000.0,
+          "investment_date": "2025-07-15"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Field Descriptions for Transaction Rows:**
+
+For BUY transactions:
+- `invested` = quantity × nav + fee
+- `current_value` = quantity × current_price
+- `profit` = current_value - invested (unrealized reference)
+- `profit_percentage` = profit / invested
+- `sale_proceeds` = 0.0
+- `cost_basis` = 0.0
+- `realized_profit` = 0.0
+
+For SELL transactions:
+- `cost_basis` = WAC × quantity (capped at remaining_cost)
+- `sale_proceeds` = quantity × nav - fee
+- `realized_profit` = sale_proceeds - cost_basis
+- `invested` = cost_basis
+- `current_value` = sale_proceeds
+- `profit` = realized_profit
+- `profit_percentage` = realized_profit / cost_basis
+
 ## Testing
 
 All endpoints are thoroughly tested with RSpec. To run the API tests:
@@ -447,33 +517,53 @@ Calculates the profit and loss for the authenticated user's entire investment po
 **Endpoint:** `GET /api/v1/profit_analytics/calculate_profit`
 
 **Response Format (200 OK):**
-
-The response contains two main keys: `category_details` and `chart_data`.
-
-- `category_details`: An object where each key is a category name (e.g., "Stocks", "Bonds"). Each category contains its aggregated financial data and a list of its assets.
-- `chart_data`: Data formatted for easy use in charts, including a summary for each category and a portfolio-wide summary.
-
 ```json
 {
-  "category_details": {
-    "Stocks": {
-      "invested": 15050.0,
-      "current_value": 16000.0,
-      "profit": 950.0,
-      "profit_percentage": 6.31,
-      "assets": [
-        {
-          "id": 1,
-          "name": "Apple Inc",
+  "status": {
+    "code": 200,
+    "message": "Profit calculation completed successfully",
+    "data": {
+      "chart_data": {
+        "categories": [
+          {
+            "label": "Stocks",
+            "invested": 15050.0,
+            "current_value": 16000.0,
+            "profit": 950.0,
+            "profit_percentage": 6.31,
+            "realized_profit": 500.0,
+            "current_value_percentage": 75.85
+          }
+        ],
+        "portfolio_summary": {
+          "total_invested": 20050.0,
+          "total_current_value": 21100.0,
+          "total_profit": 1050.0,
+          "total_profit_percentage": 5.24,
+          "total_realized_profit": 650.0
+        }
+      },
+      "category_details": {
+        "Stocks": {
           "invested": 15050.0,
           "current_value": 16000.0,
           "profit": 950.0,
           "profit_percentage": 6.31,
-          "quantity": 100.0,
-          "current_price": 160.0
-        }
-      ]
-    },
+          "realized_profit": 500.0,
+          "assets": [
+            {
+              "id": 1,
+              "name": "Apple Inc",
+              "invested": 15050.0,
+              "current_value": 16000.0,
+              "profit": 950.0,
+              "profit_percentage": 6.31,
+              "realized_profit": 500.0,
+              "quantity": 100.0,
+              "current_price": 160.0
+            }
+          ]
+        },
     "Bonds": {
       "invested": 5000.0,
       "current_value": 5100.0,

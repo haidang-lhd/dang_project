@@ -34,6 +34,10 @@ class InvestmentTransaction < ApplicationRecord
   # Define transaction types as enum with string values
   enum :transaction_type, { buy: 'buy', sell: 'sell' }
 
+  # Scopes for convenience when processing holdings
+  scope :buys, -> { where(transaction_type: 'buy') }
+  scope :sells, -> { where(transaction_type: 'sell') }
+
   validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :unit, presence: true
   validates :nav, presence: true, numericality: { greater_than_or_equal_to: 0 }

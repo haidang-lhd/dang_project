@@ -9,6 +9,8 @@ json.status do
         json.current_value category[:current_value]
         json.profit category[:profit]
         json.profit_percentage category[:profit_percentage]
+        json.realized_profit category[:realized_profit]
+        json.current_value_percentage category[:current_value_percentage]
       end
 
       json.portfolio_summary do
@@ -16,6 +18,7 @@ json.status do
         json.total_current_value @result[:chart_data][:portfolio_summary][:total_current_value]
         json.total_profit @result[:chart_data][:portfolio_summary][:total_profit]
         json.total_profit_percentage @result[:chart_data][:portfolio_summary][:total_profit_percentage]
+        json.total_realized_profit @result[:chart_data][:portfolio_summary][:total_realized_profit]
       end
     end
 
@@ -25,6 +28,7 @@ json.status do
         json.current_value category_data[:current_value]
         json.profit category_data[:profit]
         json.profit_percentage category_data[:profit_percentage]
+        json.realized_profit category_data[:realized_profit]
         json.assets category_data[:assets] do |asset|
           json.id asset[:id]
           json.name asset[:name]
@@ -32,6 +36,7 @@ json.status do
           json.current_value asset[:current_value]
           json.profit asset[:profit]
           json.profit_percentage asset[:profit_percentage]
+          json.realized_profit asset[:realized_profit]
           json.quantity asset[:quantity]
           json.current_price asset[:current_price]
         end
@@ -39,4 +44,3 @@ json.status do
     end
   end
 end
-
