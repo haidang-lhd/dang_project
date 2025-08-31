@@ -12,23 +12,24 @@ RSpec.describe 'Api::V1::ProfitAnalytics', type: :request do
     create(:asset_price, asset: asset, price: 120.0)
   end
 
-  def create_transaction(asset, type, quantity, price, fee = 0.0, date_offset = 0)
+  def create_transaction(asset, type, quantity, price, options = {})
+    options = { fee: 0.0, date_offset: 0 }.merge(options)
     create(:investment_transaction,
            user: user,
            asset: asset,
            transaction_type: type,
            quantity: quantity,
            nav: price,
-           fee: fee,
-           date: Time.current + date_offset.days,
-           created_at: Time.current + date_offset.days)
+           fee: options[:fee],
+           date: Time.current + options[:date_offset].days,
+           created_at: Time.current + options[:date_offset].days)
   end
 
   describe 'GET /api/v1/profit_analytics/calculate_profit' do
     context 'when there are transactions' do
       before do
-        create_transaction(asset, 'buy', 10, 100, 10, 1)  # Cost=1010
-        create_transaction(asset, 'sell', 5, 130, 5, 2)   # Proceeds=645
+        create_transaction(asset, 'buy', 10, 100, fee: 10, date_offset: 1)  # Cost=1010
+        create_transaction(asset, 'sell', 5, 130, fee: 5, date_offset: 2)   # Proceeds=645
         get '/api/v1/profit_analytics/calculate_profit', headers: headers, as: :json
       end
 
@@ -88,8 +89,8 @@ RSpec.describe 'Api::V1::ProfitAnalytics', type: :request do
 
   describe 'GET /api/v1/profit_analytics/calculate_profit_detail' do
     before do
-      create_transaction(asset, 'buy', 10, 100, 10, 1)
-      create_transaction(asset, 'sell', 5, 130, 5, 2)
+      create_transaction(asset, 'buy', 10, 100, fee: 10, date_offset: 1)
+      create_transaction(asset, 'sell', 5, 130, fee: 5, date_offset: 2)
       get '/api/v1/profit_analytics/calculate_profit_detail', headers: headers, as: :json
     end
 
