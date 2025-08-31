@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_30_164126) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_31_065230) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,6 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_164126) do
     t.decimal "total_amount", precision: 15, scale: 2
     t.index ["asset_id"], name: "index_investment_transactions_on_asset_id"
     t.index ["user_id"], name: "index_investment_transactions_on_user_id"
+    t.check_constraint "transaction_type::text = ANY (ARRAY['buy'::character varying, 'sell'::character varying]::text[])", name: "check_transaction_type_validity"
   end
 
   create_table "jwt_denylists", force: :cascade do |t|

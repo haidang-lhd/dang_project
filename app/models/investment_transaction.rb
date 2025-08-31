@@ -31,9 +31,13 @@ class InvestmentTransaction < ApplicationRecord
   belongs_to :user
   belongs_to :asset
 
+  # Define transaction types as enum with string values
+  enum :transaction_type, { buy: 'buy', sell: 'sell' }
+
   validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :unit, presence: true
   validates :nav, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :fee, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :total_amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :transaction_type, presence: true
 end
