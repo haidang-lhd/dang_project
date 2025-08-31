@@ -30,7 +30,7 @@ end
 end
 
 # Stocks
-[ "VPB" ].each do |label_name|
+[ "VPB", "TCBS" ].each do |label_name|
   StockAsset.find_or_create_by!(name: label_name, category: Category.find_by(name: "Stocks"))
 end
 
@@ -46,6 +46,21 @@ end
 
 
 ## Investment History
+
+# Stocks
+
+# Buy 500 TCBS at 46800 VND on August 27, 2025
+InvestmentTransaction.create!(
+  asset: StockAsset.find_by(name: "TCBS"),
+  quantity: 500,
+  nav: 46800,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "share",
+  date: Date.new(2025, 8, 27),
+  user: user
+)
+
 # Cryptocurrency
 # Buy 0.00166 BTC at 3,012,048,192.776 VND on August 6, 2025
 InvestmentTransaction.create!(
@@ -67,6 +82,30 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "token",
   date: Date.new(2025, 6, 10),
+  user: user
+)
+
+# Sell 284.50 USDT at 26,750 VND on August 20, 2025
+InvestmentTransaction.create!(
+  asset: CryptocurrencyAsset.find_by(name: "USDT"),
+  quantity: 284.50,
+  nav: 26750,
+  fee: 0.00,
+  transaction_type: "sell",
+  unit: "token",
+  date: Date.new(2025, 8, 20),
+  user: user
+)
+
+# Buy 0.0025 BTC at 3044150000 VND on August 20, 2025
+InvestmentTransaction.create!(
+  asset: CryptocurrencyAsset.find_by(name: "BTC"),
+  quantity: 0.0025,
+  nav: 3044150000,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "token",
+  date: Date.new(2025, 8, 20),
   user: user
 )
 
@@ -478,6 +517,17 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 141.75 VESAF at 35272.33 on August 26, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VESAF"),
+  quantity: 141.75,
+  nav: 35272.33,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 8, 26),
+  user: user
+)
 
 # Buy 177.60 VEOF at 28151.83 on March 7, 2024
 InvestmentTransaction.create!(
@@ -648,6 +698,17 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 70.12 VEOF at 35648.89 on August 26, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VEOF"),
+  quantity: 70.12,
+  nav: 35648.89,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 8, 26),
+  user: user
+)
 
 # Buy 182.57 VDEF at 10954.64 on March 4, 2025
 InvestmentTransaction.create!(
@@ -815,6 +876,18 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 147.80 VMEEF at 16914.46 on August 26, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VMEEF"),
+  quantity: 147.80,
+  nav: 16914.46,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 8, 26),
+  user: user
+)
+
 # Buy 56.38 DCDS at 88684.58 on July 1, 2025
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "DCDS"),
@@ -848,6 +921,18 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 3, 13),
+  user: user
+)
+
+# Buy 48.3 DCDS at 103519.66 on August 26, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "DCDS"),
+  quantity: 48.3,
+  nav: 103519.66,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 8, 26),
   user: user
 )
 
