@@ -11,7 +11,7 @@ RSpec.describe AuthHelper, type: :request do
 
     # Verify the token
     token = headers['Authorization'].split.last
-    decoded = JWT.decode(token, Devise.secret_key || Rails.application.secret_key_base, true, algorithm: 'HS256')
+    decoded = JWT.decode(token, Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base, true, algorithm: 'HS256')
     expect(decoded.first['user_id']).to eq(user.id)
   end
 end
