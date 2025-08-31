@@ -2,8 +2,8 @@ class EnsureInvestmentTransactionTypeValidity < ActiveRecord::Migration[8.0]
   def up
     # Add a check constraint to ensure transaction_type is either 'buy' or 'sell'
     execute <<-SQL
-      ALTER TABLE investment_transactions 
-      ADD CONSTRAINT check_transaction_type_validity 
+      ALTER TABLE investment_transactions
+      ADD CONSTRAINT check_transaction_type_validity
       CHECK (transaction_type IN ('buy', 'sell'))
     SQL
 
