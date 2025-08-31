@@ -9,7 +9,7 @@ module AuthHelpers
         exp: 24.hours.from_now.to_i,
         user_id: user.id, # Add this explicitly for compatibility
       },
-      Rails.application.credentials.secret_key_base
+      Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base
     )
     { 'Authorization' => "Bearer #{token}" }
   end
