@@ -8,7 +8,13 @@ class ApplicationController < ActionController::API
 
   respond_to :json
 
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
   private
+
+  def record_not_found
+    render json: { error: 'Record not found' }, status: :not_found
+  end
 
   def authenticate_user!
     if request.headers['Authorization'].present?

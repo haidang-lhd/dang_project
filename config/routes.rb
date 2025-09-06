@@ -29,7 +29,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :assets, only: %i[index]
+      resources :assets, only: %i[index create] do
+        member do
+          post :set_price
+        end
+      end
       resources :categories, only: %i[index]
       resources :investment_transactions, only: %i[index show create update destroy]
 

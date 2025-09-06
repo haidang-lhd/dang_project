@@ -65,4 +65,84 @@ RSpec.describe Api::V1::AssetsController, type: :controller do
       end
     end
   end
+
+  describe 'POST #create' do
+    let(:valid_attributes) { { name: 'New Asset', category_id: category.id, type: 'StockAsset' } }
+    let(:invalid_attributes) { { name: nil, category_id: category.id, type: 'StockAsset' } }
+
+    context 'with valid attributes' do
+      before do
+        request.headers.merge!(auth_headers)
+        post :create, params: { asset: valid_attributes }, format: :json
+      end
+
+      it 'creates a new asset' do
+        expect(response).to have_http_status(:created)
+        expect(Asset.count).to eq(3)
+      end
+    end
+
+    context 'with invalid attributes' do
+      before do
+        request.headers.merge!(auth_headers)
+        post :create, params: { asset: invalid_attributes }, format: :json
+      end
+
+      it 'does not create a new asset' do
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Asset.count).to eq(2)
+      end
+    end
+
+    context 'without authentication' do
+      it 'returns unauthorized status' do
+        post :create, params: { asset: valid_attributes }, format: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe 'PATCH #set_price' do
+    let(:price_params) { { price: 150.00 } }
+
+    context 'with valid params' do
+      before do
+        request.headers.merge!(auth_headers)
+        patch :set_price, params: { id: asset1.id, asset: price_params }, format: :json
+      end
+
+      it 'sets the price for the asset' do
+        expect(response).to have_http_status(:ok)
+        expect(asset1.asset_prices.count).to eq(1)
+        expect(asset1.latest_price.price).to eq(150.00)
+      end
+    end
+
+    context 'with invalid asset id' do
+      it 'returns not found' do
+        request.headers.merge!(auth_headers)
+        patch :set_price, params: { id: -1, asset: price_params }, format: :json
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when price setting fails' do
+      before do
+        allow_any_instance_of(Asset).to receive(:manual_set_price).and_return(false)
+        request.headers.merge!(auth_headers)
+        patch :set_price, params: { id: asset1.id, asset: price_params }, format: :json
+      end
+
+      it 'returns unprocessable entity' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'without authentication' do
+      it 'returns unauthorized status' do
+        patch :set_price, params: { id: asset1.id, asset: price_params }, format: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
 end

@@ -145,6 +145,113 @@ curl -X GET "http://localhost:3000/api/v1/assets?category_id=1" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
+### Create Asset
+
+Creates a new asset.
+
+**Endpoint:** `POST /api/v1/assets`
+
+**Request Body:**
+```json
+{
+  "asset": {
+    "name": "New Asset Name",
+    "type": "StockAsset",
+    "category_id": 1
+  }
+}
+```
+
+**Success Response (201 Created):**
+Returns the created asset object.
+```json
+{
+  "id": 3,
+  "name": "New Asset Name",
+  "type": "StockAsset",
+  "created_at": "2025-09-06T12:00:00.000Z",
+  "updated_at": "2025-09-06T12:00:00.000Z",
+  "category": {
+    "id": 1,
+    "name": "Stocks"
+  }
+}
+```
+
+**Error Response (422 Unprocessable Entity):**
+```json
+{
+  "errors": {
+    "name": ["can't be blank"]
+  }
+}
+```
+
+**Example curl request:**
+```bash
+curl -X POST "http://localhost:3000/api/v1/assets" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "asset": {
+      "name": "New Asset Name",
+      "type": "StockAsset",
+      "category_id": 1
+    }
+  }'
+```
+
+### Set Asset Price
+
+Manually sets the price for a specific asset.
+
+**Endpoint:** `PATCH /api/v1/assets/:id/set_price`
+
+**Request Body:**
+```json
+{
+  "asset": {
+    "price": 123.45
+  }
+}
+```
+
+**Success Response (200 OK):**
+Returns the newly created asset price object.
+```json
+{
+  "id": 1,
+  "asset_id": 1,
+  "price": "123.45",
+  "synced_at": "2025-09-06T12:00:00.000Z",
+  "created_at": "2025-09-06T12:00:00.000Z",
+  "updated_at": "2025-09-06T12:00:00.000Z"
+}
+```
+
+**Error Response (422 Unprocessable Entity):**
+```json
+{
+  "error": "Failed to set asset price"
+}
+```
+
+**Example curl request:**
+```bash
+curl -X PATCH "http://localhost:3000/api/v1/assets/1/set_price" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "asset": {
+      "price": 123.45
+    }
+  }'
+```
+
+```
+
 ## Investment Transactions API
 
 ### List Investment Transactions
