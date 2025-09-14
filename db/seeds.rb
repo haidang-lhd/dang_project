@@ -109,6 +109,18 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 189.9 USDT at 26303 VND on September 14, 2025
+InvestmentTransaction.create!(
+  asset: CryptocurrencyAsset.find_by(name: "USDT"),
+  quantity: 189.9,
+  nav: 26303,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "token",
+  date: Date.new(2025, 9, 14),
+  user: user
+)
+
 # Investment Fund Certificates
 # Buy 40.35 VESAF at 24779.55 VND on July 20,2023
 InvestmentTransaction.create!(
@@ -529,6 +541,18 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 109.22 VESAF at 36620.52 on September 8, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VESAF"),
+  quantity: 109.22,
+  nav: 36620.52,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 9, 8),
+  user: user
+)
+
 # Buy 177.60 VEOF at 28151.83 on March 7, 2024
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VEOF"),
@@ -710,6 +734,18 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 80.16 VEOF at 37423.98 on September 8, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VEOF"),
+  quantity: 80.16,
+  nav: 37423.98,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 9, 8),
+  user: user
+)
+
 # Buy 182.57 VDEF at 10954.64 on March 4, 2025
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "VDEF"),
@@ -888,6 +924,18 @@ InvestmentTransaction.create!(
   user: user
 )
 
+# Buy 170.52 VEOF at 17592.87 on September 8, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "VMEEF"),
+  quantity: 170.52,
+  nav: 17592.87,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 9, 8),
+  user: user
+)
+
 # Buy 56.38 DCDS at 88684.58 on July 1, 2025
 InvestmentTransaction.create!(
   asset: FundAsset.find_by(name: "DCDS"),
@@ -933,6 +981,18 @@ InvestmentTransaction.create!(
   transaction_type: "buy",
   unit: "unit",
   date: Date.new(2025, 8, 26),
+  user: user
+)
+
+# Buy 46.16 VEOF at 108318.89 on September 8, 2025
+InvestmentTransaction.create!(
+  asset: FundAsset.find_by(name: "DCDS"),
+  quantity: 46.16,
+  nav: 108318.89,
+  fee: 0.00,
+  transaction_type: "buy",
+  unit: "unit",
+  date: Date.new(2025, 9, 8),
   user: user
 )
 
